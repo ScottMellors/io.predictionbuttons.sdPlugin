@@ -1,0 +1,125 @@
+{
+    "Actions": [
+        {
+            "Name": "Start Prediction",
+            "Icon": "art/predictionicons_caticon",
+            "States": [
+                {
+                    "Image": "art/predictionicons_start",
+                    "TitleAlignment": "middle",
+                    "FontSize": "16"
+                }
+            ],
+            "SupportedInMultiActions": false,
+            "Tooltip": "Start a prediction or control an existing one!",
+            "UUID": "io.predictionbuttons.start"
+        },
+        {
+            "Name": "Cancel Prediction",
+            "Icon": "art/predictionicons_caticon",
+            "States": [
+                {
+                    "Image": "art/predictionicons_cancel",
+                    "TitleAlignment": "middle",
+                    "FontSize": "16"
+                }
+            ],
+            "SupportedInMultiActions": false,
+            "Tooltip": "Cancel and Refund spent points",
+            "UUID": "io.predictionbuttons.cancel"
+        },
+        {
+            "Name": "Exit prediction view",
+            "Icon": "art/predictionicons_caticon",
+            "States": [
+                {
+                    "Image": "art/predictionicons_back",
+                    "TitleAlignment": "middle",
+                    "FontSize": "16"
+                }
+            ],
+            "SupportedInMultiActions": false,
+            "Tooltip": "Exit the prediction control view",
+            "UUID": "io.predictionbuttons.exit"
+        },
+        {
+            "Name": "Confirm outcome 1",
+            "Icon": "art/predictionicons_caticon",
+            "States": [
+                {
+                    "Image": "art/predictionicons_outcome1",
+                    "TitleAlignment": "middle",
+                    "FontSize": "16"
+                }
+            ],
+            "SupportedInMultiActions": false,
+            "Tooltip": "Confirm the winning outcome as Outcome 1!",
+            "UUID": "io.predictionbuttons.confirmOutcome1"
+        },
+        {
+            "Name": "Confirm outcome 2",
+            "Icon": "art/predictionicons_caticon",
+            "States": [
+                {
+                    "Image": "art/predictionicons_outcome2",
+                    "TitleAlignment": "middle",
+                    "FontSize": "16"
+                }
+            ],
+            "SupportedInMultiActions": false,
+            "Tooltip": "Confirm the winning outcome as Outcome 2!",
+            "UUID": "io.predictionbuttons.confirmOutcome2"
+        },
+        {
+            "Name": "Lock Prediction",
+            "Icon": "art/predictionicons_caticon",
+            "States": [
+                {
+                    "Image": "art/predictionicons_unlocked",
+                    "TitleAlignment": "middle",
+                    "FontSize": "16"
+                },
+                {
+                    "Image": "art/predictionicons_locked",
+                    "TitleAlignment": "middle",
+                    "FontSize": "16"
+                }
+            ],
+            "SupportedInMultiActions": false,
+            "Tooltip": "Lock the current prediction manually.",
+            "UUID": "io.predictionbuttons.lock"
+        }
+    ],
+    "SDKVersion": 2,
+    "Author": "GhostlyTuna",
+    "Category": "Twitch Prediction Buttons",
+    "CategoryIcon": "art/predictionicons_caticon",
+    "CodePath": "code.html",
+    "PropertyInspectorPath": "prediction_pi.html",
+    "Description": "Set easily repeatable predictions for Twitch Chat",
+    "Name": "Twitch Prediction Buttons",
+    "Icon": "art/predictionicons_icon",
+    "URL": "https://predictionbuttons.io",
+    "Version": "1.0",
+    "Profiles": [
+        {
+            "Name": "PredictionUi",
+            "ReadOnly": true,
+            "DeviceType": 0,
+            "DontAutoSwitchWhenInstalled": true
+        }
+    ],
+    "OS": [
+        {
+            "Platform": "mac",
+            "MinimumVersion": "10.11"
+        },
+        {
+            "Platform": "windows",
+            "MinimumVersion": "10"
+        }
+    ],
+    "Software": {
+        "MinimumVersion": "4.1"
+    }
+}

@@ -1,0 +1,8 @@
+{
+    "Description": "Set repeatable predictions for Twitch Chat",
+    "Name": "Twitch Prediction Buttons",
+    "io.predictionbuttons.start": {
+        "Name": "Setup Prediction",
+        "Tooltip": "Start a prediction or control an existing one!"
+    }
+}

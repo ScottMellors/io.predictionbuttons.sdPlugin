@@ -23,7 +23,7 @@ Got one of the devices listed above? We need profiles for those devices to switc
 
 - [ ] PredictionUiXL.streamDeckProfile
 - [ ] PredictionUIMini.streamDeckProfile
-- [ ] PredictionUIMobile.streamDeckProfile
+- [x] PredictionUIMobile.streamDeckProfile
 
 ---
 

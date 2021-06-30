@@ -15,8 +15,22 @@
         var globalSettings = {};
 
         function loadCorrectProfile(context, device) {
-            //TODO: Check for type of device and load other profiles
             var profileName = "PredictionUi";
+            switch (device.type) {
+                case 3:
+                    profileName = "PredictionUiMobile";
+                    break;
+                case 2:
+                    profileName = "PredictionUiXL";
+                    break;
+
+                case 1:
+                    profileName = "PredictionUiMini";
+                    break;
+                default:
+                    break;
+            }
+
             loadProfile(context, device, profileName);
         }
 
@@ -96,6 +110,7 @@
                         settings.outcome1 = jsonPayload.outcome1;
                         settings.outcome2 = jsonPayload.outcome2;
                         settings.duration = jsonPayload.duration;
+                        settings.profileSwap = jsonPayload.profileSwap;
 
                         setSettings(context, settings);
                     } else if (jsonPayload.hasOwnProperty("broadcasterId")) {
@@ -150,8 +165,9 @@
 
                                     saveGlobalSettings(pluginUUID);
 
-                                    loadCorrectProfile(pluginUUID, device);
-
+                                    if (settings.profileSwap != false) {
+                                        loadCorrectProfile(pluginUUID, device);
+                                    }
                                 } else {
                                     //continue to create;
                                     fetch("https://api.twitch.tv/helix/predictions", {
@@ -183,7 +199,9 @@
                                                 saveGlobalSettings(pluginUUID);
 
                                                 //transition to new profile screen
-                                                loadCorrectProfile(pluginUUID, device);
+                                                if (settings.profileSwap != false) {
+                                                    loadCorrectProfile(pluginUUID, device);
+                                                }
                                             });
                                         } else {
                                             showError(context);
@@ -225,7 +243,9 @@
                                             saveGlobalSettings(pluginUUID);
 
                                             //transition to new profile screen
-                                            loadCorrectProfile(pluginUUID, device);
+                                            if (settings.profileSwap != false) {
+                                                loadCorrectProfile(pluginUUID, device);
+                                            }
                                         });
                                     } else {
                                         showError(context);

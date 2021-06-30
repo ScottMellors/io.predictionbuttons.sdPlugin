@@ -31,6 +31,7 @@
         {
             "Name": "Exit prediction view",
             "Icon": "art/predictionicons_caticon",
+            "VisibleInActionsList": false,
             "States": [
                 {
                     "Image": "art/predictionicons_back",

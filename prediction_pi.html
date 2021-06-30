@@ -9,43 +9,55 @@
 </head>
 
 <body>
-    <div class="sdpi-item unauthd">
-        <div class="sdpi-item-label">Get Started</div>
+    <div class="sdpi-heading">Get Started</div>
+    <div class="sdpi-item">
         <details class="sdpi-item-value">
             <summary>IMPORTANT: Twitch Authentication</summary>
             <p>We require you to auth with TwitchTokenGenerator to allow creation and management of predictions.</p>
             <p>Once authorized, copy your access token into the field below.</p>
             <p>This token may expire, you will need to reauthorize and reapply the code.</p>
             <button onclick="loadAuthWindow()" class="sdpi-item-value">Get AccessToken</button>
-            <div class="sdpi-item unauthd">
+            <div class="sdpi-item">
                 <div class="sdpi-item-label">Access Token</div>
                 <input class="sdpi-item-value" id="access_token" type="text" value="">
             </div>
-            <div class="sdpi-item unauthd">
+            <div class="sdpi-item">
                 <div class="sdpi-item-label">Check Auth</div>
                 <button onclick="checkAuth()" class="sdpi-item-value">Check Auth</button>
             </div>
         </details>
     </div>
-    <div class="sdpi-item authd">
+    <div class="sdpi-heading">Prediction Settings</div>
+    <div class="sdpi-item">
         <div class="sdpi-item-label">Prediction Title</div>
         <input class="sdpi-item-value" id="prediction_title" type="text" value="Will I RIP?"
             onchange="sendValueToPlugin('predictionUpdate','')">
     </div>
-    <div class="sdpi-item authd">
+    <div class="sdpi-item">
         <div class="sdpi-item-label">Prediction Outcome 1</div>
         <input class="sdpi-item-value" id="prediction_outcome_1" type="text" value="Yes"
             onchange="sendValueToPlugin('predictionUpdate','')">
     </div>
-    <div class="sdpi-item authd">
+    <div class="sdpi-item">
         <div class="sdpi-item-label">Prediction Outcome 2</div>
         <input class="sdpi-item-value" id="prediction_outcome_2" type="text" value="No"
             onchange="sendValueToPlugin('predictionUpdate','')">
     </div>
-    <div class="sdpi-item authd">
+    <div class="sdpi-item">
         <div class="sdpi-item-label">Prediction Duration (Seconds)</div>
         <input class="sdpi-item-value" id="prediction_duration" type="number" value="120"
             onchange="sendValueToPlugin('predictionUpdate','')">
+    </div>
+
+    <div class="sdpi-heading">Manual Layout</div>
+    <div type="checkbox" class="sdpi-item" id="single-check">
+        <div class="sdpi-item-label">Swap to Subview</div>
+        <div class="sdpi-item-value">
+            <div class="sdpi-item-child">
+                <input id="profileSwap" onclick="sendValueToPlugin('predictionUpdate','')" checked type="checkbox" value="on">
+                <label for="profileSwap" class="sdpi-item-label"><span></span>Swap to Subview</label>
+            </div>
+        </div>
     </div>
     </div>
 
@@ -131,12 +143,14 @@
                     var savedOutcome1 = actionInfo.payload.settings.outcome1;
                     var savedOutcome2 = actionInfo.payload.settings.outcome2;
                     var savedDuration = actionInfo.payload.settings.duration;
+                    var savedProfileSwap = actionInfo.payload.settings.profileSwap;
 
                     //load settings
                     document.getElementById('prediction_title').value = savedPredictionTitle || "Will I RIP?";
                     document.getElementById('prediction_outcome_1').value = savedOutcome1 || "YES";
                     document.getElementById('prediction_outcome_2').value = savedOutcome2 || "NO";
                     document.getElementById('prediction_duration').value = savedDuration || 120;
+                    document.getElementById('profileSwap').checked = savedProfileSwap;
                 } else {
                     setVisibilityOfClassItems("sdpi-item", "none");
                 }
@@ -177,6 +191,7 @@
                     payload["outcome1"] = document.getElementById("prediction_outcome_1").value;
                     payload["outcome2"] = document.getElementById("prediction_outcome_2").value;
                     payload["duration"] = document.getElementById("prediction_duration").value;
+                    payload["profileSwap"] = document.getElementById("profileSwap").checked;
                 } else if (type == "authUpdate") {
                     payload = value;
                 } else if (type == "showError") {

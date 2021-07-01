@@ -8,9 +8,6 @@ function saveGlobalSettings(context) {
             'context': context,
             'payload': globalSettings
         };
-
-        console.log("SAVING " + JSON.stringify(globalSettings) + " " + context);
-
         websocket.send(JSON.stringify(json));
     }
 }
@@ -50,9 +47,6 @@ function requestGlobalSettings(pluginUUID) {
             'event': 'getGlobalSettings',
             'context': pluginUUID
         };
-
-        console.log("requestin " + pluginUUID);
-
         websocket.send(JSON.stringify(json));
     }
 }

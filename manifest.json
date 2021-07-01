@@ -107,6 +107,24 @@
             "ReadOnly": true,
             "DeviceType": 0,
             "DontAutoSwitchWhenInstalled": true
+        },
+        {
+            "Name": "PredictionUiXL",
+            "ReadOnly": true,
+            "DeviceType": 1,
+            "DontAutoSwitchWhenInstalled": true
+        },
+        {
+            "Name": "PredictionUiMini",
+            "ReadOnly": true,
+            "DeviceType": 2,
+            "DontAutoSwitchWhenInstalled": true
+        },
+        {
+            "Name": "PredictionUiMobile",
+            "ReadOnly": true,
+            "DeviceType": 3,
+            "DontAutoSwitchWhenInstalled": true
         }
     ],
     "OS": [

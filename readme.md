@@ -21,7 +21,7 @@ When you want to update this plugin while in this beta phase, you will need to r
 
 Got one of the devices listed above? We need profiles for those devices to switch to, may cause issues initially. You can do this by creating a new profile, adding the prediction buttons in a layout similar to this layout:![Elgato Streamdeck App showing a grid with the buttons laid out](https://i.imgur.com/RmmYWpV.png) Back button, cancel prediction button, lock button on one row, followed by outcomes 1 and 2 buttons below. Then exporting the profile, naming it appropriately and submitting a pull request on here.
 
-- [ ] PredictionUiXL.streamDeckProfile
+- [x] PredictionUiXL.streamDeckProfile
 - [ ] PredictionUIMini.streamDeckProfile
 - [x] PredictionUIMobile.streamDeckProfile
 

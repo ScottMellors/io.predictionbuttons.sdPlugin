@@ -8,6 +8,11 @@
                     "Image": "art/predictionicons_start",
                     "TitleAlignment": "middle",
                     "FontSize": "16"
+                },
+                {
+                    "Image": "art/predictionicons_auth",
+                    "TitleAlignment": "middle",
+                    "FontSize": "16"
                 }
             ],
             "SupportedInMultiActions": false,
@@ -100,7 +105,7 @@
     "Name": "Twitch Prediction Buttons",
     "Icon": "art/predictionicons_icon",
     "URL": "https://predictionbuttons.io",
-    "Version": "1.0.1",
+    "Version": "1.1",
     "Profiles": [
         {
             "Name": "PredictionUi",

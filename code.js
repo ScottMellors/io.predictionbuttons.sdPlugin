@@ -3,7 +3,7 @@ var globalSettings = {};
 
 var websocket = null;
 var pluginUUID = null;
-
+var gotGlobalSettings = false;
 var device;
 
 function loadCorrectProfile(context, device) {
@@ -152,6 +152,7 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
                 showError();
             }
         } else if (event == "didReceiveGlobalSettings") {
+            gotGlobalSettings = true;
             globalSettings = jsonPayload.settings;
         }
     };
@@ -216,7 +217,30 @@ var startAction = {
     },
 
     onWillAppear: function (context, settings, coordinates) {
-
+        //check auth state, set state false if failed
+        if (gotGlobalSettings) {
+            if (!globalSettings.broadcasterAccessToken) {
+                setAuthState(context, false);
+            } else {
+                //check auth state
+                fetch("https://id.twitch.tv/oauth2/validate", {
+                    headers: {
+                        Authorization: "Bearer " + globalSettings.broadcasterAccessToken,
+                        "Client-Id": "gp762nuuoqcoxypju8c569th9wz7q5",
+                        "Content-Type": "application/json"
+                    }
+                }).then((response) => {
+                    if (!response.ok) {
+                        throw new Error(response.status);
+                    } else {
+                        setAuthState(context, true);
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                    setAuthState(context, false);
+                });
+            }
+        }
     }
 }
 

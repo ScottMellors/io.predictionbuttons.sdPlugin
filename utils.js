@@ -94,6 +94,18 @@ function showError(context) {
     websocket.send(JSON.stringify(json));
 }
 
+function setAuthState(context, authState) {
+    var json = {
+        "event": "setState",
+        "context": context,
+        "payload": {
+            "state": authState ? 0 : 1
+        }
+    };
+
+    websocket.send(JSON.stringify(json));
+}
+
 function setLockState(context, lockState) {
     var json = {
         "event": "setState",

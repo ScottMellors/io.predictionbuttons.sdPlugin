@@ -48,12 +48,75 @@ function checkAuth() {
     });
 }
 
+function PI(inLanguage) {
+    // Init PI
+    var instance = this;
+
+    // Public localizations for the UI
+    this.localization = {};
+
+    // Load the localizations
+    getLocalization(inLanguage, function (inStatus, inLocalization) {
+        if (inStatus) {
+            // Save public localization
+            instance.localization = inLocalization['PI'];
+
+            // Localize the PI
+            instance.localize();
+        } else {
+            console.log(inLocalization);
+        }
+    });
+
+    // Localize the UI
+    this.localize = function () {
+        // Check if localizations were loaded
+        if (instance.localization == null) {
+            return;
+        }
+
+        // Localize the Auth
+        document.getElementById('get_started_heading').innerHTML = instance.localization['GetStarted'];
+        document.getElementById('twitch_auth_heading').innerHTML = instance.localization['TwitchAuthTitle'];
+        document.getElementById('twitch_auth_para_1').innerHTML = instance.localization['TwitchAuthDesc1'];
+        document.getElementById('twitch_auth_para_2').innerHTML = instance.localization['TwitchAuthDesc2'];
+        document.getElementById('twitch_auth_para_3').innerHTML = instance.localization['TwitchAuthDesc3'];
+        document.getElementById('get_access_token_button').innerHTML = instance.localization['GetAccessTokenCTA'];
+        document.getElementById('access_token_heading').innerHTML = instance.localization['AccessToken'];
+        document.getElementById('check_auth_heading').innerHTML = instance.localization['CheckAuth'];
+        document.getElementById('check_auth_heading').innerHTML = instance.localization['CheckAuthButton'];
+
+        // Prediction Settings
+        document.getElementById('prediction_settings_title').innerHTML = instance.localization['PredictionSettings'];
+        document.getElementById('prediction_title').value = instance.localization['ExamplePredictionTitle'];
+        document.getElementById('prediction_title_label').innerHTML = instance.localization['PredictionTitle'];
+        document.getElementById('prediction_outcome_1_title').innerHTML = instance.localization['PredictionOutcome1'];
+        document.getElementById('prediction_outcome_2_title').innerHTML = instance.localization['PredictionOutcome2'];
+        document.getElementById('prediction_outcome_1').value = instance.localization['ExamplePredictionOutcome1'];
+        document.getElementById('prediction_outcome_2').value = instance.localization['ExamplePredictionOutcome2'];
+        document.getElementById('prediction_duration_title').innerHTML = instance.localization['PredictionDuration'];
+
+        // Profile Swap
+        document.getElementById('manual_layout').innerHTML = instance.localization['ManualLayout'];
+        document.getElementById('swap_to_subview_title').innerHTML = instance.localization['SwapToSubview'];
+        document.getElementById('swap_to_subview_checkbox').innerHTML = "<span></span>" + instance.localization['SwapToSubview'];
+    };
+
+}
+
 function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, inActionInfo) {
     uuid = inUUID;
     // please note: the incoming arguments are of type STRING, so
     // in case of the inActionInfo, we must parse it into JSON first
     actionInfo = JSON.parse(inActionInfo); // cache the info
     websocket = new WebSocket('ws://localhost:' + inPort);
+
+    var info = JSON.parse(inInfo);
+
+    // Retrieve language
+    var language = info['application']['language'];
+
+    PI(language);
 
     // if connection was established, the websocket sends
     // an 'onopen' event, where we need to register our PI

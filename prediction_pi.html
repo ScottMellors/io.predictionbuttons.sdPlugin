@@ -10,54 +10,54 @@
 </head>
 
 <body>
-    <div class="sdpi-heading">Get Started</div>
+    <div class="sdpi-heading" id="get_started_heading">Get Started</div>
     <div class="sdpi-item">
         <details class="sdpi-item-value">
-            <summary>IMPORTANT: Twitch Authentication</summary>
-            <p>We require you to auth with TwitchTokenGenerator to allow creation and management of predictions.</p>
-            <p>Once authorized, copy your access token into the field below.</p>
-            <p>This token may expire, you will need to reauthorize and reapply the code.</p>
-            <button onclick="loadAuthWindow()" class="sdpi-item-value">Get AccessToken</button>
+            <summary id="twitch_auth_heading">IMPORTANT: Twitch Authentication</summary>
+            <p id="twitch_auth_para_1">We require you to auth with TwitchTokenGenerator to allow creation and management of predictions.</p>
+            <p id="twitch_auth_para_2">Once authorized, copy your access token into the field below.</p>
+            <p id="twitch_auth_para_3">This token may expire, you will need to reauthorize and reapply the code.</p>
+            <button onclick="loadAuthWindow()" class="sdpi-item-value" id="get_access_token_button">Get AccessToken</button>
             <div class="sdpi-item">
-                <div class="sdpi-item-label">Access Token</div>
+                <div class="sdpi-item-label" id="access_token_heading">Access Token</div>
                 <input class="sdpi-item-value" id="access_token" type="text" value="">
             </div>
             <div class="sdpi-item">
-                <div class="sdpi-item-label">Check Auth</div>
-                <button onclick="checkAuth()" class="sdpi-item-value">Check Auth</button>
+                <div class="sdpi-item-label" id="check_auth_heading">Check Auth</div>
+                <button onclick="checkAuth()" class="sdpi-item-value" id="check_auth_button">Check Auth</button>
             </div>
         </details>
     </div>
-    <div class="sdpi-heading">Prediction Settings</div>
+    <div class="sdpi-heading" id="prediction_settings_title">Prediction Settings</div>
     <div class="sdpi-item">
-        <div class="sdpi-item-label">Prediction Title</div>
+        <div class="sdpi-item-label" id="prediction_title_label">Prediction Title</div>
         <input class="sdpi-item-value" id="prediction_title" type="text" value="Will I RIP?"
             onchange="sendValueToPlugin('predictionUpdate','')">
     </div>
     <div class="sdpi-item">
-        <div class="sdpi-item-label">Prediction Outcome 1</div>
+        <div class="sdpi-item-label" id="prediction_outcome_1_title">Prediction Outcome 1</div>
         <input class="sdpi-item-value" id="prediction_outcome_1" type="text" value="Yes"
             onchange="sendValueToPlugin('predictionUpdate','')">
     </div>
     <div class="sdpi-item">
-        <div class="sdpi-item-label">Prediction Outcome 2</div>
+        <div class="sdpi-item-label" id="prediction_outcome_2_title">Prediction Outcome 2</div>
         <input class="sdpi-item-value" id="prediction_outcome_2" type="text" value="No"
             onchange="sendValueToPlugin('predictionUpdate','')">
     </div>
     <div class="sdpi-item">
-        <div class="sdpi-item-label">Prediction Duration (Seconds)</div>
+        <div class="sdpi-item-label" id="prediction_duration_title">Prediction Duration (Seconds)</div>
         <input class="sdpi-item-value" id="prediction_duration" type="number" value="120"
             onchange="sendValueToPlugin('predictionUpdate','')">
     </div>
 
-    <div class="sdpi-heading">Manual Layout</div>
+    <div class="sdpi-heading" id="manual_layout">Manual Layout</div>
     <div type="checkbox" class="sdpi-item" id="single-check">
-        <div class="sdpi-item-label">Swap to Subview</div>
+        <div class="sdpi-item-label" id="swap_to_subview_title">Swap to Subview</div>
         <div class="sdpi-item-value">
             <div class="sdpi-item-child">
                 <input id="profileSwap" onclick="sendValueToPlugin('predictionUpdate','')" checked type="checkbox"
                     value="on">
-                <label for="profileSwap" class="sdpi-item-label"><span></span>Swap to Subview</label>
+                <label for="profileSwap" class="sdpi-item-label" id="swap_to_subview_checkbox"><span></span> Swap to Subview</label>
             </div>
         </div>
     </div>

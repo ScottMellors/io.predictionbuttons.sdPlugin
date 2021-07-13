@@ -94,6 +94,39 @@ function showError(context) {
     websocket.send(JSON.stringify(json));
 }
 
+// Load the localizations - CHEERS HUE LIGHTS
+function getLocalization(inLanguage, inCallback) {
+    var url = inLanguage + '.json';
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+
+    xhr.onload = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            try {
+                data = JSON.parse(xhr.responseText);
+                var localization = data['Localization'];
+                inCallback(true, localization);
+            }
+            catch (e) {
+                inCallback(false, 'Localizations is not a valid json.');
+            }
+        }
+        else {
+            inCallback(false, 'Could not load the localizations.');
+        }
+    };
+
+    xhr.onerror = function () {
+        inCallback(false, 'An error occurred while loading the localizations.');
+    };
+
+    xhr.ontimeout = function () {
+        inCallback(false, 'Localization timed out.');
+    };
+
+    xhr.send();
+}
+
 function setAuthState(context, authState) {
     var json = {
         "event": "setState",

@@ -12,10 +12,10 @@ function loadCorrectProfile(context, device) {
         case 3:
             profileName = "PredictionUiMobile";
             break;
-        case 2:
+        case 1:
             profileName = "PredictionUiXL";
             break;
-        case 1:
+        case 2:
             profileName = "PredictionUiMini";
             break;
         default:

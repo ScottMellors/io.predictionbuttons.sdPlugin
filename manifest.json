@@ -101,6 +101,7 @@
     "CategoryIcon": "art/predictionicons_caticon",
     "CodePath": "code.html",
     "PropertyInspectorPath": "prediction_pi.html",
+    "DefaultWindowSize": [1280, 720],
     "Description": "Set easily repeatable predictions for Twitch Chat",
     "Name": "Twitch Prediction Buttons",
     "Icon": "art/predictionicons_icon",

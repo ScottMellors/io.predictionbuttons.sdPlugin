@@ -4,28 +4,29 @@ var globalSettings = {};
 var websocket = null;
 var pluginUUID = null;
 var gotGlobalSettings = false;
-var device;
+var devices;
 
 function loadCorrectProfile(context, device) {
-    var profileName = "PredictionUi";
     switch (device.type) {
         case 3:
-            profileName = "PredictionUiMobile";
-            break;
-        case 1:
-            profileName = "PredictionUiXL";
+            loadProfile(context, device, "PredictionUiMobile");
             break;
         case 2:
-            profileName = "PredictionUiMini";
+            loadProfile(context, device, "PredictionUiXL");
+            break;
+        case 1:
+            loadProfile(context, device, "PredictionUiMini");
+            break;
+        case 0:
+            loadProfile(context, device, "PredictionUi");
             break;
         default:
+            console.log("Device type not found! - " + device.type);
             break;
     }
-
-    loadProfile(context, device, profileName);
 }
 
-function createPrediction(context, settings) {
+function createPrediction(context, settings, deviceId) {
     //continue to create;
     fetch("https://api.twitch.tv/helix/predictions", {
         body: JSON.stringify({
@@ -57,7 +58,7 @@ function createPrediction(context, settings) {
 
                 //transition to new profile screen
                 if (settings.profileSwap != false) {
-                    loadCorrectProfile(pluginUUID, device);
+                    loadCorrectProfile(pluginUUID, devices[deviceId]);
                 }
             });
         } else {
@@ -72,8 +73,10 @@ function createPrediction(context, settings) {
 function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, inInfo) {
     pluginUUID = inPluginUUID;
 
-    //TODO: CHECK HOW THIS WORKS WITH MULTIPLE DEVICES
-    device = JSON.parse(inInfo).devices[0];
+    devices = JSON.parse(inInfo).devices.reduce(function (map, obj) {
+        map[obj.id] = obj;
+        return map;
+    }, {});
 
     // Open the web socket
     websocket = new WebSocket("ws://localhost:" + inPort);
@@ -100,21 +103,22 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
         var context = jsonObj["context"];
         var jsonPayload = jsonObj["payload"] || {};
         var settings = jsonPayload["settings"] || {};
+        var device = jsonObj["device"];
 
         if (event == "keyDown") {
             var settings = jsonPayload["settings"];
             var coordinates = jsonPayload["coordinates"];
             var userDesiredState = jsonPayload["userDesiredState"];
             if (action == "io.predictionbuttons.start") {
-                startAction.onKeyDown(context, settings, coordinates, userDesiredState);
+                startAction.onKeyDown(context, settings, coordinates, userDesiredState, device);
             } else if (action == "io.predictionbuttons.cancel") {
-                cancelAction.onKeyDown(context, settings, coordinates, userDesiredState);
+                cancelAction.onKeyDown(context, settings, coordinates, userDesiredState, device);
             } else if (action == "io.predictionbuttons.exit") {
                 exitAction.onKeyDown(context, settings, coordinates, userDesiredState);
             } else if (action == "io.predictionbuttons.confirmoutcome1") {
-                outcome1Action.onKeyDown(context, settings, coordinates, userDesiredState);
+                outcome1Action.onKeyDown(context, settings, coordinates, userDesiredState, device);
             } else if (action == "io.predictionbuttons.confirmoutcome2") {
-                outcome2Action.onKeyDown(context, settings, coordinates, userDesiredState);
+                outcome2Action.onKeyDown(context, settings, coordinates, userDesiredState, device);
             } else if (action == "io.predictionbuttons.lock") {
                 lockAction.onkeydown(context, settings, coordinates, userDesiredState);
             }
@@ -166,7 +170,7 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
 var startAction = {
     type: "io.predictionbuttons.start",
 
-    onKeyDown: function (context, settings, coordinates, userDesiredState) {
+    onKeyDown: function (context, settings, coordinates, userDesiredState, deviceId) {
 
         fetch("https://api.twitch.tv/helix/predictions?" + new URLSearchParams({
             "broadcaster_id": globalSettings.broadcasterId,
@@ -197,13 +201,13 @@ var startAction = {
                             saveGlobalSettings(pluginUUID);
 
                             if (settings.profileSwap != false) {
-                                loadCorrectProfile(pluginUUID, device);
+                                loadCorrectProfile(pluginUUID, devices[deviceId]);
                             }
                         } else {
-                            createPrediction(context, settings);
+                            createPrediction(context, settings, deviceId);
                         }
                     } else {
-                        createPrediction(context, settings);
+                        createPrediction(context, settings, deviceId);
                     }
                 });
             }
@@ -213,7 +217,11 @@ var startAction = {
     },
 
     onKeyUp: function (context, settings, coordinates, userDesiredState) {
-
+        if (!globalSettings.broadcasterAccessToken) {
+            setAuthState(context, false);
+        } else {
+            setAuthState(context, true);
+        }
     },
 
     onWillAppear: function (context, settings, coordinates) {
@@ -246,7 +254,7 @@ var startAction = {
 
 var outcome1Action = {
     type: "io.predictionbuttons.confirmOutcome1",
-    onKeyDown: function (context, settings, coordinates, userDesiredState) {
+    onKeyDown: function (context, settings, coordinates, userDesiredState, deviceId) {
 
         fetch("https://api.twitch.tv/helix/predictions", {
             method: "PATCH",
@@ -273,7 +281,7 @@ var outcome1Action = {
                 saveGlobalSettings(pluginUUID);
 
                 //go back to default profile
-                returnToProfile(pluginUUID, device);
+                returnToProfile(pluginUUID, devices[deviceId]);
             }
         }
         ).catch((error) => {
@@ -285,7 +293,7 @@ var outcome1Action = {
 
 var outcome2Action = {
     type: "io.predictionbuttons.confirmOutcome2",
-    onKeyDown: function (context, settings, coordinates, userDesiredState) {
+    onKeyDown: function (context, settings, coordinates, userDesiredState, deviceId) {
         fetch("https://api.twitch.tv/helix/predictions", {
             method: "PATCH",
             body: JSON.stringify({
@@ -311,7 +319,7 @@ var outcome2Action = {
                 saveGlobalSettings(pluginUUID);
 
                 //go back to default profile
-                returnToProfile(pluginUUID, device);
+                returnToProfile(pluginUUID, devices[deviceId]);
             }
         }
         ).catch((error) => {
@@ -323,7 +331,7 @@ var outcome2Action = {
 
 var cancelAction = {
     type: "io.predictionbuttons.cancel",
-    onKeyDown: function (context, settings, coordinates, userDesiredState) {
+    onKeyDown: function (context, settings, coordinates, userDesiredState, deviceId) {
         fetch("https://api.twitch.tv/helix/predictions", {
             method: "PATCH",
             body: JSON.stringify({
@@ -355,7 +363,7 @@ var cancelAction = {
                 saveGlobalSettings(pluginUUID);
 
                 //go back to default profile
-                returnToProfile(pluginUUID, device);
+                returnToProfile(pluginUUID, devices[deviceId]);
             }
         }
         ).catch((error) => {

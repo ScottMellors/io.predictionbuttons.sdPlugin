@@ -81,6 +81,7 @@ function PI(inLanguage) {
         document.getElementById('twitch_auth_para_1').innerHTML = instance.localization['TwitchAuthDesc1'];
         document.getElementById('twitch_auth_para_2').innerHTML = instance.localization['TwitchAuthDesc2'];
         document.getElementById('twitch_auth_para_3').innerHTML = instance.localization['TwitchAuthDesc3'];
+        document.getElementById('twitch_auth_para_4').innerHTML = instance.localization['TwitchAuthDesc4'];
         document.getElementById('get_access_token_button').innerHTML = instance.localization['GetAccessTokenCTA'];
         document.getElementById('access_token_heading').innerHTML = instance.localization['AccessToken'];
         document.getElementById('check_auth_heading').innerHTML = instance.localization['CheckAuth'];
@@ -101,7 +102,6 @@ function PI(inLanguage) {
         document.getElementById('swap_to_subview_title').innerHTML = instance.localization['SwapToSubview'];
         document.getElementById('swap_to_subview_checkbox').innerHTML = "<span></span>" + instance.localization['SwapToSubview'];
     };
-
 }
 
 function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, inActionInfo) {

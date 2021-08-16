@@ -117,13 +117,13 @@
         {
             "Name": "PredictionUiXL",
             "ReadOnly": true,
-            "DeviceType": 1,
+            "DeviceType": 2,
             "DontAutoSwitchWhenInstalled": true
         },
         {
             "Name": "PredictionUiMini",
             "ReadOnly": true,
-            "DeviceType": 2,
+            "DeviceType": 1,
             "DontAutoSwitchWhenInstalled": true
         },
         {

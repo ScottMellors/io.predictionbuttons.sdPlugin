@@ -248,6 +248,8 @@ var startAction = {
                     setAuthState(context, false);
                 });
             }
+        } else {
+            setAuthState(context, true);
         }
     }
 }

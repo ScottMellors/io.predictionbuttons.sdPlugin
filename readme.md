@@ -4,11 +4,11 @@ This is a plugin for the Elgato Streamdeck enabling users to setup repeatable pr
 
 ## How it works
 
-Using an authing app on my (Channel Points website) [https://channel-points-tool.com], users add an access code from the generator and can then setup predictions etc. When a prediction is initiated, the user is directed to a subview where they can directly control a prediction.
+Using an authing app on my [Channel Points website](https://channel-points-tool.com), users add an access code from the generator and can then setup predictions etc. When a prediction is initiated, the user is directed to a subview where they can directly control a prediction.
 
 ## Getting the app
 
-You can access the (releases) [https://github.com/ScottMellors/io.predictionbuttons.sdPlugin/releases/] manually to download the plugin, or (when its available) on the Streamdeck store, allows updates to be downloaded automatically!
+You can access the [releases](https://github.com/ScottMellors/io.predictionbuttons.sdPlugin/releases/) manually to download the plugin, or (when its available) on the Streamdeck store, allows updates to be downloaded automatically!
 
 ## Manually updating the app
 

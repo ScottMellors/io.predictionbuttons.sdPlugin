@@ -5,7 +5,7 @@ let pluginAction = null;
 let uuid;
 
 function loadAuthWindow() {
-    window.open("https://twitchtokengenerator.com/quick/2Erw5lcK5B", "_blank");
+    window.open("https://channel-points-tool.com/streamdeck-auth", "_blank");
 }
 
 function checkAuth() {

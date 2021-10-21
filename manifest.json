@@ -106,7 +106,7 @@
     "Name": "Twitch Prediction Buttons",
     "Icon": "art/predictionicons_icon",
     "URL": "https://predictionbuttons.io",
-    "Version": "1.2",
+    "Version": "1.2.1",
     "Profiles": [
         {
             "Name": "PredictionUi",

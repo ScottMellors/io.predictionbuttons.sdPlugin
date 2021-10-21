@@ -38,7 +38,7 @@ function createPrediction(context, settings, deviceId) {
         }),
         headers: {
             Authorization: "Bearer " + globalSettings.broadcasterAccessToken,
-            "Client-Id": "gp762nuuoqcoxypju8c569th9wz7q5",
+            "Client-Id": "dx2y2z4epfd3ycn9oho1dnucnd7ou5",
             "Content-Type": "application/json"
         },
         method: "POST"
@@ -177,7 +177,7 @@ var startAction = {
         }), {
             headers: {
                 Authorization: "Bearer " + globalSettings.broadcasterAccessToken,
-                "Client-Id": "gp762nuuoqcoxypju8c569th9wz7q5",
+                "Client-Id": "dx2y2z4epfd3ycn9oho1dnucnd7ou5",
                 "Content-Type": "application/json"
             }
         }).then(response => {
@@ -234,7 +234,7 @@ var startAction = {
                 fetch("https://id.twitch.tv/oauth2/validate", {
                     headers: {
                         Authorization: "Bearer " + globalSettings.broadcasterAccessToken,
-                        "Client-Id": "gp762nuuoqcoxypju8c569th9wz7q5",
+                        "Client-Id": "dx2y2z4epfd3ycn9oho1dnucnd7ou5",
                         "Content-Type": "application/json"
                     }
                 }).then((response) => {
@@ -268,7 +268,7 @@ var outcome1Action = {
             }),
             headers: {
                 Authorization: "Bearer " + globalSettings.broadcasterAccessToken,
-                "Client-Id": "gp762nuuoqcoxypju8c569th9wz7q5",
+                "Client-Id": "dx2y2z4epfd3ycn9oho1dnucnd7ou5",
                 "Content-Type": "application/json"
             }
         }).then(response => {
@@ -306,7 +306,7 @@ var outcome2Action = {
             }),
             headers: {
                 Authorization: "Bearer " + globalSettings.broadcasterAccessToken,
-                "Client-Id": "gp762nuuoqcoxypju8c569th9wz7q5",
+                "Client-Id": "dx2y2z4epfd3ycn9oho1dnucnd7ou5",
                 "Content-Type": "application/json"
             }
         }).then(response => {
@@ -343,7 +343,7 @@ var cancelAction = {
             }),
             headers: {
                 Authorization: "Bearer " + globalSettings.broadcasterAccessToken,
-                "Client-Id": "gp762nuuoqcoxypju8c569th9wz7q5",
+                "Client-Id": "dx2y2z4epfd3ycn9oho1dnucnd7ou5",
                 "Content-Type": "application/json"
             }
         }).then(response => {
@@ -396,7 +396,7 @@ var lockAction = {
                 }),
                 headers: {
                     Authorization: "Bearer " + globalSettings.broadcasterAccessToken,
-                    "Client-Id": "gp762nuuoqcoxypju8c569th9wz7q5",
+                    "Client-Id": "dx2y2z4epfd3ycn9oho1dnucnd7ou5",
                     "Content-Type": "application/json"
                 }
             }).then(response => {

@@ -16,7 +16,7 @@ function checkAuth() {
     fetch("https://id.twitch.tv/oauth2/validate", {
         headers: {
             Authorization: "Bearer " + broadcasterAccessToken,
-            "Client-Id": "gp762nuuoqcoxypju8c569th9wz7q5",
+            "Client-Id": "dx2y2z4epfd3ycn9oho1dnucnd7ou5",
             "Content-Type": "application/json"
         }
     }).then((response) => {

@@ -15,7 +15,7 @@
                     "FontSize": "16"
                 }
             ],
-            "SupportedInMultiActions": false,
+            "SupportedInMultiActions": true,
             "Tooltip": "Start a prediction or control an existing one!",
             "UUID": "io.predictionbuttons.start"
         },
@@ -106,7 +106,7 @@
     "Name": "Twitch Prediction Buttons",
     "Icon": "art/predictionicons_icon",
     "URL": "https://predictionbuttons.io",
-    "Version": "1.2.1",
+    "Version": "1.2.2",
     "Profiles": [
         {
             "Name": "PredictionUi",

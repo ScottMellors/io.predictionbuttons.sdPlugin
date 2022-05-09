@@ -33,7 +33,7 @@ function createPrediction(context, settings, deviceId) {
             "broadcaster_id": globalSettings.broadcasterId,
             "title": settings.predictionTitle ?? "Will I RIP?",
             "outcomes": [{ "title": settings.outcome1 ?? "YES" },
-            { "title": settings.outcome2 ?? "NO" }],
+            { "title": settings.outcome2 ?? "NO" }, { "title": settings.outcome3 ?? "BEANS" }],
             "prediction_window": settings.duration ?? 120
         }),
         headers: {

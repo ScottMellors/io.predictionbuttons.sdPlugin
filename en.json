@@ -29,10 +29,10 @@
         "PI" : {
             "GetStarted": "Get Started",
             "TwitchAuthTitle": "IMPORTANT: Twitch Authentication",
-            "TwitchAuthDesc1": "We require you to auth with TwitchTokenGenerator to allow creation and management of predictions.",
+            "TwitchAuthDesc1": "We require you to auth with one of my other tools to allow creation and management of predictions.",
             "TwitchAuthDesc2": "Once authorized, copy your access token into the field below.",
             "TwitchAuthDesc3": "This token may expire, you will need to reauthorize and reapply the code.",
-            "TwitchAuthDesc4": "Having capcha window issues? Try here in an external browser - https://twitchtokengenerator.com/quick/2Erw5lcK5B",
+            "TwitchAuthDesc4": "Having capcha window issues? Try here in an external browser - https://channel-points-tool.com/streamdeck-auth",
             "GetAccessTokenCTA" : "Get AccessToken",
             "AccessToken" : "Access Token",
             "CheckAuth" : "Check Auth",

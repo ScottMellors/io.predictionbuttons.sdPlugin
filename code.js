@@ -6,6 +6,13 @@ var pluginUUID = null;
 var gotGlobalSettings = false;
 var devices;
 
+function loadOutcomeButtons() {
+    //get counter of outcome object
+    let outcomes = globalSettings.activeOutcomes;
+
+    //foreach pop a new item in the row
+}
+
 function loadCorrectProfile(context, device) {
     switch (device.type) {
         case 3:
@@ -33,7 +40,7 @@ function createPrediction(context, settings, deviceId) {
             "broadcaster_id": globalSettings.broadcasterId,
             "title": settings.predictionTitle ?? "Will I RIP?",
             "outcomes": [{ "title": settings.outcome1 ?? "YES" },
-            { "title": settings.outcome2 ?? "NO" }, { "title": settings.outcome3 ?? "BEANS" }],
+            { "title": settings.outcome2 ?? "NO" }], //DOes not accept more than two atm!
             "prediction_window": settings.duration ?? 120
         }),
         headers: {
@@ -48,8 +55,13 @@ function createPrediction(context, settings, deviceId) {
             response.json().then((body) => {
                 //get prediction id
                 globalSettings.activePredictionId = body.data[0].id;
-                globalSettings.activeOutcome1Id = body.data[0].outcomes[0].id;
-                globalSettings.activeOutcome2Id = body.data[0].outcomes[1].id;
+
+                globalSettings.activeOutcome1Id = body.data[0].outcomes[0].id; //REMOVE THIS
+                globalSettings.activeOutcome2Id = body.data[0].outcomes[1].id; //REMOVE THIS
+
+                //Store outcomes, not individual ID's
+                globalSettings.activeOutcomes = body.data[0].outcomes;
+
                 globalSettings.activePredictionState = "ACTIVE";
 
                 startDurationTimer(context, settings.duration ?? 120);

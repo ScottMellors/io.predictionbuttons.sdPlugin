@@ -26,27 +26,30 @@
         "Tooltip": "Lock the current prediction manually."
     },
     "Localization": {
-        "PI" : {
+        "PI": {
             "GetStarted": "Get Started",
             "TwitchAuthTitle": "IMPORTANT: Twitch Authentication",
             "TwitchAuthDesc1": "We require you to auth with one of my other tools to allow creation and management of predictions.",
             "TwitchAuthDesc2": "Once authorized, copy your access token into the field below.",
             "TwitchAuthDesc3": "This token may expire, you will need to reauthorize and reapply the code.",
             "TwitchAuthDesc4": "Having capcha window issues? Try here in an external browser - https://channel-points-tool.com/streamdeck-auth",
-            "GetAccessTokenCTA" : "Get AccessToken",
-            "AccessToken" : "Access Token",
-            "CheckAuth" : "Check Auth",
-            "CheckAuthButton" : "Check Auth",
-            "PredictionSettings" : "Prediction Settings",
-            "PredictionTitle" : "Prediction Title",
-            "ExamplePredictionTitle" : "Will I RIP?",
-            "ExamplePredictionOutcome1" : "Yes",
-            "ExamplePredictionOutcome2" : "No",
-            "PredictionOutcome1" : "Prediction Outcome 1",
-            "PredictionOutcome2" : "Prediction Outcome 2",
-            "PredictionDuration" : "Prediction Duration (Seconds)",
-            "ManualLayout" : "Manual Layout",
-            "SwapToSubview" : "Swap to Subview"
+            "GetAccessTokenCTA": "Get AccessToken",
+            "AccessToken": "Access Token",
+            "CheckAuth": "Check Auth",
+            "CheckAuthButton": "Check Auth",
+            "PredictionSettings": "Prediction Settings",
+            "PredictionTitle": "Prediction Title",
+            "ExamplePredictionTitle": "Will I RIP?",
+            "ExamplePredictionOutcome1": "Yes",
+            "ExamplePredictionOutcome2": "No",
+            "PredictionOutcome": "Prediction Outcome ",
+            "PredictionOutcome1": "Prediction Outcome 1",
+            "PredictionOutcome2": "Prediction Outcome 2",
+            "PredictionDuration": "Prediction Duration (Seconds)",
+            "ManualLayout": "Manual Layout",
+            "SwapToSubview": "Swap to Subview",
+            "ExtraOutcomesLabel": "Extra Outcomes",
+            "ExtraOutcomesButtonLabel": "Add more outcomes (max 10)"
         }
     }
 }

@@ -48,6 +48,20 @@
             "UUID": "io.predictionbuttons.exit"
         },
         {
+            "Name": "Confirm outcome",
+            "Icon": "art/predictionicons_caticon",
+            "States": [
+                {
+                    "Image": "art/predictionicons_outcome",
+                    "TitleAlignment": "middle",
+                    "FontSize": "16"
+                }
+            ],
+            "SupportedInMultiActions": false,
+            "Tooltip": "Confirm the winning outcome",
+            "UUID": "io.predictionbuttons.confirmOutcome"
+        },
+        {
             "Name": "Confirm outcome 1",
             "Icon": "art/predictionicons_caticon",
             "States": [

@@ -4,6 +4,9 @@ let websocket = null;
 let pluginAction = null;
 let uuid;
 
+let boilerplateOutcomes = ["YES", "NO", "MAYBE", "I Don't know", "Can you repeat the question?", "Outcome 6", "Outcome 7", "Outcome 8", "Outcome 9", "Outcome 10"];
+let activeOutcomes = undefined;
+
 function loadAuthWindow() {
     window.open("https://channel-points-tool.com/streamdeck-auth", "_blank");
 }
@@ -48,9 +51,11 @@ function checkAuth() {
     });
 }
 
+let instance;
+
 function PI(inLanguage) {
     // Init PI
-    var instance = this;
+    instance = this;
 
     // Public localizations for the UI
     this.localization = {};
@@ -97,6 +102,9 @@ function PI(inLanguage) {
         document.getElementById('prediction_outcome_2').value = instance.localization['ExamplePredictionOutcome2'];
         document.getElementById('prediction_duration_title').innerHTML = instance.localization['PredictionDuration'];
 
+        document.getElementById('extra_outcomes_title').innerHTML = instance.localization['ExtraOutcomesLabel'];
+        document.getElementById('addOutcomesButton').innerHTML = instance.localization['ExtraOutcomesButtonLabel'];
+
         // Profile Swap
         document.getElementById('manual_layout').innerHTML = instance.localization['ManualLayout'];
         document.getElementById('swap_to_subview_title').innerHTML = instance.localization['SwapToSubview'];
@@ -137,15 +145,35 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
 
         if (actionInfo.action == "io.predictionbuttons.start") {
             let savedPredictionTitle = actionInfo.payload.settings.predictionTitle;
-            let savedOutcome1 = actionInfo.payload.settings.outcome1;
-            let savedOutcome2 = actionInfo.payload.settings.outcome2;
+
+            activeOutcomes = actionInfo.payload.settings.outcomes || ["YES", "NO"];
+
+            for (let i = 1; i <= outcomes.length; i++) {
+                let outcome = outcomes[i - 1];
+
+                //if > 2, build widget, insert data
+                if (i > 2) {
+                    addOutcome();
+                }
+
+                document.getElementById(`prediction_outcome_${i}`).value = outcome || boilerplateOutcomes[i - 1];
+            }
+
+            if (activeOutcomes.length == 10) {
+                //disable button
+                document.getElementById("addOutcomesButton").disabled = true;
+            }
+
+            let savedOutcome1 = actionInfo.payload.settings.outcome1; //To Remove
+            let savedOutcome2 = actionInfo.payload.settings.outcome2; //To Remove
+
             let savedDuration = actionInfo.payload.settings.duration;
             let savedProfileSwap = actionInfo.payload.settings.profileSwap;
 
             //load settings
             document.getElementById('prediction_title').value = savedPredictionTitle || "Will I RIP?";
-            document.getElementById('prediction_outcome_1').value = savedOutcome1 || "YES";
-            document.getElementById('prediction_outcome_2').value = savedOutcome2 || "NO";
+            document.getElementById('prediction_outcome_1').value = savedOutcome1 || "YES"; //To Remove
+            document.getElementById('prediction_outcome_2').value = savedOutcome2 || "NO"; //To Remove
             document.getElementById('prediction_duration').value = savedDuration || 120;
             document.getElementById('profileSwap').checked = savedProfileSwap;
         } else {
@@ -167,6 +195,44 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
             document.getElementById("access_token").value = globalSettings.broadcasterAccessToken;
         }
     };
+}
+
+function addOutcome() {
+    //get current outcomes length
+    if (activeOutcomes.length < 10) {
+
+        let newWidget = document.createElement("div");
+        newWidget.classList.add("sdpi-item");
+
+        //localise widget
+        activeOutcomes.push(boilerplateOutcomes[activeOutcomes.length])
+
+        let outcomeInput = document.createElement("input");
+        outcomeInput.classList.add("sdpi-item-value");
+        outcomeInput.setAttribute("type", "text");
+        outcomeInput.addEventListener('change', function () {
+            sendValueToPlugin('predictionUpdate', '');
+        }, false);
+        outcomeInput.setAttribute("value", activeOutcomes[activeOutcomes.length - 1]);
+
+        let outcomeLabel = document.createElement("div");
+        outcomeInput.classList.add("sdpi-item-label");
+        outcomeLabel.innerHTML = instance.localization['PredictionOutcome'] + (activeOutcomes.length);
+
+        newWidget.appendChild(outcomeLabel);
+        newWidget.appendChild(outcomeInput);
+
+        let outcomesDiv = document.getElementById("moreOutcomesDiv");
+        outcomesDiv.appendChild(newWidget);
+
+        //ensure values are updated
+        sendValueToPlugin('predictionUpdate', '');
+
+        if (activeOutcomes.length == 10) {
+            //disable button
+            document.getElementById("addOutcomesButton").disabled = true;
+        }
+    }
 }
 
 function setVisibilityOfClassItems(className, display) {

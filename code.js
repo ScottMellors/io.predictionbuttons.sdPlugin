@@ -153,8 +153,9 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
         } else if (event == "sendToPlugin") {
             if (jsonPayload.hasOwnProperty("predictionTitle")) {
                 settings.predictionTitle = jsonPayload.predictionTitle;
-                settings.outcome1 = jsonPayload.outcome1;
-                settings.outcome2 = jsonPayload.outcome2;
+                //settings.outcome1 = jsonPayload.outcome1;
+                //settings.outcome2 = jsonPayload.outcome2;
+                settings.outcomes = jsonPayload.outcomes;
                 settings.duration = jsonPayload.duration;
                 settings.profileSwap = jsonPayload.profileSwap;
 

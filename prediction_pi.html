@@ -21,7 +21,8 @@
                 <button onclick="loadAuthWindow()" class="sdpi-item-value" id="get_access_token_button">Get
                     AccessToken</button>
                 <p id="twitch_auth_para_4">Having capcha window issues? Try here in an external browser -
-                    <strong>https://channel-points-tool.com/streamdeck-auth</strong></p>
+                    <strong>https://channel-points-tool.com/streamdeck-auth</strong>
+                </p>
                 <div class="sdpi-item">
                     <div class="sdpi-item-label" id="access_token_heading">Access Token</div>
                     <input class="sdpi-item-value" id="access_token" type="password" value="">
@@ -36,17 +37,17 @@
         <div class="sdpi-item">
             <div class="sdpi-item-label" id="prediction_title_label">Prediction Title</div>
             <input class="sdpi-item-value" id="prediction_title" type="text" value="Will I RIP?"
-                onchange="sendValueToPlugin('predictionUpdate','')">
+                onchange="sendValueToPlugin('predictionUpdate', undefined)">
         </div>
         <div class="sdpi-item">
             <div class="sdpi-item-label" id="prediction_outcome_1_title">Prediction Outcome 1</div>
-            <input class="sdpi-item-value" id="prediction_outcome_1" type="text" value="Yes"
-                onchange="sendValueToPlugin('predictionUpdate','')">
+            <input class="sdpi-item-value" id="prediction_outcome_1" type="text" value="YES"
+                onchange="sendValueToPlugin('predictionUpdate',1)">
         </div>
         <div class="sdpi-item">
             <div class="sdpi-item-label" id="prediction_outcome_2_title">Prediction Outcome 2</div>
-            <input class="sdpi-item-value" id="prediction_outcome_2" type="text" value="No"
-                onchange="sendValueToPlugin('predictionUpdate','')">
+            <input class="sdpi-item-value" id="prediction_outcome_2" type="text" value="NO"
+                onchange="sendValueToPlugin('predictionUpdate',2)">
         </div>
         <div id="moreOutcomesDiv"></div>
         <div class="sdpi-item">

@@ -146,17 +146,26 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
         if (actionInfo.action == "io.predictionbuttons.start") {
             let savedPredictionTitle = actionInfo.payload.settings.predictionTitle;
 
-            activeOutcomes = actionInfo.payload.settings.outcomes || ["YES", "NO"];
+            if (actionInfo.payload.settings.outcomes.length < 2) {
+                activeOutcomes = ["YES", "NO"];
+            } else {
+                activeOutcomes = actionInfo.payload.settings.outcomes || ["YES", "NO"];
+            }
 
-            for (let i = 1; i <= outcomes.length; i++) {
-                let outcome = outcomes[i - 1];
+            for (let i = 1; i <= activeOutcomes.length; i++) {
+                let outcome = activeOutcomes[i - 1];
+
+                console.log(outcome + " " + `prediction_outcome_${i}`);
 
                 //if > 2, build widget, insert data
                 if (i > 2) {
-                    addOutcome();
-                }
+                    addOutcome(i);
+                    document.getElementById(`prediction_outcome_${i}`).value = outcome || boilerplateOutcomes[i - 1];
 
-                document.getElementById(`prediction_outcome_${i}`).value = outcome || boilerplateOutcomes[i - 1];
+                } else {
+                    document.getElementById(`prediction_outcome_${i}`).value = outcome || boilerplateOutcomes[i - 1];
+
+                }
             }
 
             if (activeOutcomes.length == 10) {
@@ -164,16 +173,16 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
                 document.getElementById("addOutcomesButton").disabled = true;
             }
 
-            let savedOutcome1 = actionInfo.payload.settings.outcome1; //To Remove
-            let savedOutcome2 = actionInfo.payload.settings.outcome2; //To Remove
+            //let savedOutcome1 = actionInfo.payload.settings.outcome1; //To Remove
+            //let savedOutcome2 = actionInfo.payload.settings.outcome2; //To Remove
 
             let savedDuration = actionInfo.payload.settings.duration;
             let savedProfileSwap = actionInfo.payload.settings.profileSwap;
 
             //load settings
             document.getElementById('prediction_title').value = savedPredictionTitle || "Will I RIP?";
-            document.getElementById('prediction_outcome_1').value = savedOutcome1 || "YES"; //To Remove
-            document.getElementById('prediction_outcome_2').value = savedOutcome2 || "NO"; //To Remove
+            //document.getElementById('prediction_outcome_1').value = savedOutcome1 || "YES"; //To Remove
+            //document.getElementById('prediction_outcome_2').value = savedOutcome2 || "NO"; //To Remove
             document.getElementById('prediction_duration').value = savedDuration || 120;
             document.getElementById('profileSwap').checked = savedProfileSwap;
         } else {
@@ -197,7 +206,7 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
     };
 }
 
-function addOutcome() {
+function addOutcome(pos) {
     //get current outcomes length
     if (activeOutcomes.length < 10) {
 
@@ -205,19 +214,22 @@ function addOutcome() {
         newWidget.classList.add("sdpi-item");
 
         //localise widget
-        activeOutcomes.push(boilerplateOutcomes[activeOutcomes.length])
+        if (pos == undefined) {
+            activeOutcomes.push(boilerplateOutcomes[activeOutcomes.length]);
+        }
 
         let outcomeInput = document.createElement("input");
         outcomeInput.classList.add("sdpi-item-value");
+        outcomeInput.id = `prediction_outcome_${pos || activeOutcomes.length - 1}`;
         outcomeInput.setAttribute("type", "text");
         outcomeInput.addEventListener('change', function () {
-            sendValueToPlugin('predictionUpdate', '');
+            sendValueToPlugin('predictionUpdate', pos || activeOutcomes.length);
         }, false);
-        outcomeInput.setAttribute("value", activeOutcomes[activeOutcomes.length - 1]);
+        outcomeInput.setAttribute("value", activeOutcomes[pos || activeOutcomes.length - 1]);
 
         let outcomeLabel = document.createElement("div");
-        outcomeInput.classList.add("sdpi-item-label");
-        outcomeLabel.innerHTML = instance.localization['PredictionOutcome'] + (activeOutcomes.length);
+        outcomeLabel.classList.add("sdpi-item-label");
+        outcomeLabel.innerHTML = instance.localization['PredictionOutcome'] + (pos || activeOutcomes.length);
 
         newWidget.appendChild(outcomeLabel);
         newWidget.appendChild(outcomeInput);
@@ -226,7 +238,9 @@ function addOutcome() {
         outcomesDiv.appendChild(newWidget);
 
         //ensure values are updated
-        sendValueToPlugin('predictionUpdate', '');
+        if (!pos) {
+            sendValueToPlugin('predictionUpdate', '');
+        }
 
         if (activeOutcomes.length == 10) {
             //disable button
@@ -248,10 +262,46 @@ function sendValueToPlugin(type, value) {
 
         let payload = {};
 
+        //Need to do a sanity check on outcomes, delete any elements are length 0
+
         if (type == "predictionUpdate") {
+
+            if (typeof value == 'number') {
+                //update positing with contents
+
+                let updatedValue = document.getElementById(`prediction_outcome_${value}`).value.trim();
+
+                if (updatedValue == "") {
+
+                    if (activeOutcomes.length > 2) {
+                        //empty extra outcomes
+                        document.getElementById("moreOutcomesDiv").innerHTML = "";
+                    }
+
+                    //delete pos
+                    activeOutcomes.splice(value - 1, 1);
+
+                    //redraw if over two?
+                    if (activeOutcomes.length > 2) {
+                        for (let i = 3; i <= activeOutcomes.length; i++) {
+                            let outcome = activeOutcomes[i - 1];
+
+                            addOutcome(i);
+                            document.getElementById(`prediction_outcome_${i}`).value = outcome || boilerplateOutcomes[i - 1];
+                        }
+                    }
+
+                } else {
+                    //update
+                    activeOutcomes[value - 1] = document.getElementById(`prediction_outcome_${value}`).value;
+                }
+
+            }
+
+            console.log(activeOutcomes.length);
+
             payload["predictionTitle"] = document.getElementById("prediction_title").value;
-            payload["outcome1"] = document.getElementById("prediction_outcome_1").value;
-            payload["outcome2"] = document.getElementById("prediction_outcome_2").value;
+            payload["outcomes"] = activeOutcomes;
             payload["duration"] = document.getElementById("prediction_duration").value;
             payload["profileSwap"] = document.getElementById("profileSwap").checked;
         } else if (type == "authUpdate") {

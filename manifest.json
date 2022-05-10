@@ -48,25 +48,11 @@
             "UUID": "io.predictionbuttons.exit"
         },
         {
-            "Name": "Confirm outcome",
-            "Icon": "art/predictionicons_caticon",
-            "States": [
-                {
-                    "Image": "art/predictionicons_outcome",
-                    "TitleAlignment": "middle",
-                    "FontSize": "16"
-                }
-            ],
-            "SupportedInMultiActions": false,
-            "Tooltip": "Confirm the winning outcome",
-            "UUID": "io.predictionbuttons.confirmOutcome"
-        },
-        {
             "Name": "Confirm outcome 1",
             "Icon": "art/predictionicons_caticon",
             "States": [
                 {
-                    "Image": "art/predictionicons_outcome1",
+                    "Image": "art/predictionicons_outcome",
                     "TitleAlignment": "middle",
                     "FontSize": "16"
                 }
@@ -80,7 +66,7 @@
             "Icon": "art/predictionicons_caticon",
             "States": [
                 {
-                    "Image": "art/predictionicons_outcome2",
+                    "Image": "art/predictionicons_outcome",
                     "TitleAlignment": "middle",
                     "FontSize": "16"
                 }
@@ -88,6 +74,20 @@
             "SupportedInMultiActions": false,
             "Tooltip": "Confirm the winning outcome as Outcome 2!",
             "UUID": "io.predictionbuttons.confirmOutcome2"
+        },
+        {
+            "Name": "Confirm outcome 3",
+            "Icon": "art/predictionicons_caticon",
+            "States": [
+                {
+                    "Image": "art/predictionicons_outcome",
+                    "TitleAlignment": "middle",
+                    "FontSize": "16"
+                }
+            ],
+            "SupportedInMultiActions": false,
+            "Tooltip": "Confirm the winning outcome as Outcome 3!",
+            "UUID": "io.predictionbuttons.confirmOutcome3"
         },
         {
             "Name": "Lock Prediction",

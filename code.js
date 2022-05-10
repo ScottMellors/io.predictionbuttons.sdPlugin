@@ -56,9 +56,6 @@ function createPrediction(context, settings, deviceId) {
                 //get prediction id
                 globalSettings.activePredictionId = body.data[0].id;
 
-                globalSettings.activeOutcome1Id = body.data[0].outcomes[0].id; //REMOVE THIS
-                globalSettings.activeOutcome2Id = body.data[0].outcomes[1].id; //REMOVE THIS
-
                 //Store outcomes, not individual ID's
                 globalSettings.activeOutcomes = body.data[0].outcomes;
 
@@ -126,7 +123,7 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
             } else if (action == "io.predictionbuttons.cancel") {
                 cancelAction.onKeyDown(context, settings, coordinates, userDesiredState, device);
             } else if (action == "io.predictionbuttons.exit") {
-                exitAction.onKeyDown(context, settings, coordinates, userDesiredState);
+                exitAction.onKeyDown(context, settings, coordinates, userDesiredState, device);
             } else if (action == "io.predictionbuttons.confirmoutcome1") {
                 outcome1Action.onKeyDown(context, settings, coordinates, userDesiredState, device);
             } else if (action == "io.predictionbuttons.confirmoutcome2") {
@@ -144,17 +141,29 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
         } else if (event == "willAppear") {
             settings = jsonPayload["settings"];
             var coordinates = jsonPayload["coordinates"];
-            if (action == "io.predictionbuttons.start") {
-                requestGlobalSettings(pluginUUID);
-                startAction.onWillAppear(context, settings, coordinates);
-            } else if (action == "io.predictionbuttons.lock") {
-                lockAction.onWillAppear(context, settings, coordinates);
+
+            switch (action) {
+                case "io.predictionbuttons.start":
+                    requestGlobalSettings(pluginUUID);
+                    startAction.onWillAppear(context, settings, coordinates);
+                    break;
+                default:
+                    //get correct variable for id
+                    let actionType = action.replace("io.predictionbuttons.", "");
+
+                    let actionObj = actionSet[actionType];
+                    if (actionObj) {
+                        actionObj.onWillAppear(context, settings, coordinates);
+                    }
+                    break;
             }
+
+
+
+
         } else if (event == "sendToPlugin") {
             if (jsonPayload.hasOwnProperty("predictionTitle")) {
                 settings.predictionTitle = jsonPayload.predictionTitle;
-                //settings.outcome1 = jsonPayload.outcome1;
-                //settings.outcome2 = jsonPayload.outcome2;
                 settings.outcomes = jsonPayload.outcomes;
                 settings.duration = jsonPayload.duration;
                 settings.profileSwap = jsonPayload.profileSwap;
@@ -206,8 +215,7 @@ var startAction = {
                             if (lastPrediction.id != globalSettings.activePredictionId) {
                                 //resume remote started prediction
                                 globalSettings.activePredictionId = lastPrediction.id;
-                                globalSettings.activeOutcome1Id = lastPrediction.outcomes[0].id;
-                                globalSettings.activeOutcome2Id = lastPrediction.outcomes[1].id;
+                                globalSettings.activeOutcomes = lastPrediction.outcomes;
                                 globalSettings.activePredictionState = lastPrediction.status;
                             }
 
@@ -277,7 +285,7 @@ var outcome1Action = {
                 "broadcaster_id": globalSettings.broadcasterId,
                 "id": globalSettings.activePredictionId,
                 "status": "RESOLVED",
-                "winning_outcome_id": globalSettings.activeOutcome1Id
+                "winning_outcome_id": globalSettings.activeOutcomes[0].id
             }),
             headers: {
                 Authorization: "Bearer " + globalSettings.broadcasterAccessToken,
@@ -290,8 +298,7 @@ var outcome1Action = {
             } else {
                 //clean up settings
                 globalSettings.activePredictionId = undefined;
-                globalSettings.activeOutcome1Id = undefined;
-                globalSettings.activeOutcome2Id = undefined;
+                globalSettings.activeOutcomes = undefined;
 
                 saveGlobalSettings(pluginUUID);
 
@@ -303,6 +310,15 @@ var outcome1Action = {
             console.log(error);
             showError(context);
         });
+    },
+    onWillAppear: function (context, settings, coordinates) {
+        console.log(gotGlobalSettings);
+
+        //check auth state, set state false if failed
+        if (gotGlobalSettings) {
+            //set the label with outcome text
+            setTitle(context, globalSettings.activeOutcomes[0].title);
+        }
     }
 };
 
@@ -315,7 +331,7 @@ var outcome2Action = {
                 "broadcaster_id": globalSettings.broadcasterId,
                 "id": globalSettings.activePredictionId,
                 "status": "RESOLVED",
-                "winning_outcome_id": globalSettings.activeOutcome2Id
+                "winning_outcome_id": globalSettings.activeOutcomes[1].id
             }),
             headers: {
                 Authorization: "Bearer " + globalSettings.broadcasterAccessToken,
@@ -328,8 +344,7 @@ var outcome2Action = {
             } else {
                 //clean up settings
                 globalSettings.activePredictionId = undefined;
-                globalSettings.activeOutcome1Id = undefined;
-                globalSettings.activeOutcome2Id = undefined;
+                globalSettings.activeOutcomes = undefined;
 
                 saveGlobalSettings(pluginUUID);
 
@@ -341,6 +356,13 @@ var outcome2Action = {
             console.log(error);
             showError(context);
         });
+    },
+    onWillAppear: function (context, settings, coordinates) {
+        //check auth state, set state false if failed
+        if (gotGlobalSettings) {
+            //set the label with outcome text
+            setTitle(context, globalSettings.activeOutcomes[1].title);
+        }
     }
 };
 
@@ -371,8 +393,7 @@ var cancelAction = {
 
                 //clean up settings
                 globalSettings.activePredictionId = undefined;
-                globalSettings.activeOutcome1Id = undefined;
-                globalSettings.activeOutcome2Id = undefined;
+                globalSettings.activeOutcomes = undefined;
                 globalSettings.activePredictionState = undefined;
 
                 saveGlobalSettings(pluginUUID);
@@ -390,8 +411,8 @@ var cancelAction = {
 
 var exitAction = {
     type: "io.predictionbuttons.exit",
-    onKeyDown: function (context, settings, coordinates, userDesiredState) {
-        returnToProfile(pluginUUID, device);
+    onKeyDown: function (context, settings, coordinates, userDesiredState, deviceId) {
+        returnToProfile(pluginUUID, devices[deviceId]);
     }
 };
 
@@ -434,3 +455,8 @@ var lockAction = {
         setLockState(context, currentLockState);
     }
 }
+
+let actionSet = {
+    "lock": lockAction, "start": startAction, "cancel": cancelAction, "exit": exitAction,
+    "confirmoutcome1": outcome1Action, "confirmoutcome2": outcome2Action
+};

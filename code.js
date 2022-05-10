@@ -6,13 +6,6 @@ var pluginUUID = null;
 var gotGlobalSettings = false;
 var devices;
 
-function loadOutcomeButtons() {
-    //get counter of outcome object
-    let outcomes = globalSettings.activeOutcomes;
-
-    //foreach pop a new item in the row
-}
-
 function loadCorrectProfile(context, device) {
     switch (device.type) {
         case 3:
@@ -118,19 +111,14 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
             var settings = jsonPayload["settings"];
             var coordinates = jsonPayload["coordinates"];
             var userDesiredState = jsonPayload["userDesiredState"];
-            if (action == "io.predictionbuttons.start") {
-                startAction.onKeyDown(context, settings, coordinates, userDesiredState, device);
-            } else if (action == "io.predictionbuttons.cancel") {
-                cancelAction.onKeyDown(context, settings, coordinates, userDesiredState, device);
-            } else if (action == "io.predictionbuttons.exit") {
-                exitAction.onKeyDown(context, settings, coordinates, userDesiredState, device);
-            } else if (action == "io.predictionbuttons.confirmoutcome1") {
-                outcome1Action.onKeyDown(context, settings, coordinates, userDesiredState, device);
-            } else if (action == "io.predictionbuttons.confirmoutcome2") {
-                outcome2Action.onKeyDown(context, settings, coordinates, userDesiredState, device);
-            } else if (action == "io.predictionbuttons.lock") {
-                lockAction.onkeydown(context, settings, coordinates, userDesiredState);
+
+            //get correct variable for id
+            let actionType = action.replace("io.predictionbuttons.", "");
+            let actionObj = onKeyDownActionSet[actionType];
+            if (actionObj) {
+                actionObj.onKeyDown(context, settings, coordinates, userDesiredState, device);
             }
+            
         } else if (event == "keyUp") {
             var settings = jsonPayload["settings"];
             var coordinates = jsonPayload["coordinates"];
@@ -151,16 +139,12 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
                     //get correct variable for id
                     let actionType = action.replace("io.predictionbuttons.", "");
 
-                    let actionObj = actionSet[actionType];
+                    let actionObj = willAppearActionSet[actionType];
                     if (actionObj) {
                         actionObj.onWillAppear(context, settings, coordinates);
                     }
                     break;
             }
-
-
-
-
         } else if (event == "sendToPlugin") {
             if (jsonPayload.hasOwnProperty("predictionTitle")) {
                 settings.predictionTitle = jsonPayload.predictionTitle;
@@ -418,7 +402,7 @@ var exitAction = {
 
 var lockAction = {
     type: "io.predictionbuttons.lock",
-    onkeydown: function (context, settings, coordinates, userDesiredState) {
+    onkeydown: function (context, settings, coordinates, userDesiredState, device) {
         //update button state
         if (globalSettings.activePredictionState === "ACTIVE") {
             fetch("https://api.twitch.tv/helix/predictions", {
@@ -456,7 +440,17 @@ var lockAction = {
     }
 }
 
+//Action Sets
 let actionSet = {
+    "lock": lockAction, "start": startAction, "cancel": cancelAction, "exit": exitAction,
+    "confirmoutcome1": outcome1Action, "confirmoutcome2": outcome2Action
+}
+
+let willAppearActionSet = {
+    "lock": lockAction, "confirmoutcome1": outcome1Action, "confirmoutcome2": outcome2Action
+};
+
+let onKeyDownActionSet = {
     "lock": lockAction, "start": startAction, "cancel": cancelAction, "exit": exitAction,
     "confirmoutcome1": outcome1Action, "confirmoutcome2": outcome2Action
 };

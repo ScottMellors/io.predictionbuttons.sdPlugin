@@ -353,7 +353,7 @@ var outcome2Action = {
 let outcomeAction = {
     type: "io.predictionbuttons.confirmOutcome",
     onKeyDown: function (context, settings, coordinates, userDesiredState, deviceId) {
-        let outcomeNumber = getOutcomeNumberFromCoords(coordinates, deviceId) - 1;
+        let outcomeNumber = getOutcomeNumberFromCoords(coordinates, deviceId);
         if (outcomeNumber < globalSettings.activeOutcomes.length) {
             fetch("https://api.twitch.tv/helix/predictions", {
                 method: "PATCH",
@@ -391,16 +391,16 @@ let outcomeAction = {
 
     },
     onWillAppear: function (context, settings, coordinates, deviceId) {
-        let outcomeNumber = getOutcomeNumberFromCoords(coordinates, deviceId) - 1;
+        let outcomeNumber = getOutcomeNumberFromCoords(coordinates, deviceId);
 
         //check auth state, set state false if failed
         if (gotGlobalSettings && outcomeNumber < globalSettings.activeOutcomes.length) {
             //set the label with outcome text
-            setTitle(context, globalSettings.activeOutcomes[outcomeNumber].title);
             setOutcomeState(context, 0);
+            setTitle(context, globalSettings.activeOutcomes[outcomeNumber].title);
         } else {
-            setTitle(context, "");
             setOutcomeState(context, 1);
+            setTitle(context, "");
         }
     }
 };
@@ -414,7 +414,7 @@ function getOutcomeNumberFromCoords(coordinates, deviceId) {
         //TODO I DUNNO LOL
     } else {
         //normal layout should suffice?
-        outcomeNumber = (coordinates.row == 2 ? 0 : 5) + coordinates.column;
+        outcomeNumber = (coordinates.row == 1 ? 0 : 5) + coordinates.column;
     }
 
     return outcomeNumber;

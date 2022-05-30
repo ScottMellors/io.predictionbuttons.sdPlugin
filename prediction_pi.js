@@ -144,6 +144,9 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
         websocket.send(JSON.stringify(settingsJson));
 
         if (actionInfo.action == "io.predictionbuttons.start") {
+            setVisibilityOfClassItems("sdpi-heading", "flex");
+            setVisibilityOfClassItems("sdpi-item", "flex");
+
             let savedPredictionTitle = actionInfo.payload.settings.predictionTitle;
 
             if (actionInfo.payload.settings.outcomes.length < 2) {
@@ -171,16 +174,11 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
                 document.getElementById("addOutcomesButton").disabled = true;
             }
 
-            //let savedOutcome1 = actionInfo.payload.settings.outcome1; //To Remove
-            //let savedOutcome2 = actionInfo.payload.settings.outcome2; //To Remove
-
             let savedDuration = actionInfo.payload.settings.duration;
             let savedProfileSwap = actionInfo.payload.settings.profileSwap;
 
             //load settings
             document.getElementById('prediction_title').value = savedPredictionTitle || "Will I RIP?";
-            //document.getElementById('prediction_outcome_1').value = savedOutcome1 || "YES"; //To Remove
-            //document.getElementById('prediction_outcome_2').value = savedOutcome2 || "NO"; //To Remove
             document.getElementById('prediction_duration').value = savedDuration || 120;
             document.getElementById('profileSwap').checked = savedProfileSwap;
         } else {

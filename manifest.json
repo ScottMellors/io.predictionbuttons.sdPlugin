@@ -48,6 +48,25 @@
             "UUID": "io.predictionbuttons.exit"
         },
         {
+            "Name": "Confirm outcome",
+            "Icon": "art/predictionicons_caticon",
+            "States": [
+                {
+                    "Image": "art/predictionicons_outcome",
+                    "TitleAlignment": "middle",
+                    "FontSize": "16"
+                },
+                {
+                    "Image": "art/predictionicons_outcome_empty",
+                    "Title": ""
+                }
+            ],
+            "SupportedInMultiActions": false,
+            "Tooltip": "Confirm the winning outcome!",
+            "UUID": "io.predictionbuttons.confirmOutcome",
+            "VisibleInActionsList": true
+        },
+        {
             "Name": "Confirm outcome 1",
             "Icon": "art/predictionicons_caticon",
             "States": [
@@ -55,6 +74,10 @@
                     "Image": "art/predictionicons_outcome",
                     "TitleAlignment": "middle",
                     "FontSize": "16"
+                },
+                {
+                    "Image": "art/predictionicons_outcome_empty",
+                    "Title": ""
                 }
             ],
             "SupportedInMultiActions": false,
@@ -69,6 +92,10 @@
                     "Image": "art/predictionicons_outcome",
                     "TitleAlignment": "middle",
                     "FontSize": "16"
+                },
+                {
+                    "Image": "art/predictionicons_outcome_empty",
+                    "Title": ""
                 }
             ],
             "SupportedInMultiActions": false,
@@ -83,6 +110,10 @@
                     "Image": "art/predictionicons_outcome",
                     "TitleAlignment": "middle",
                     "FontSize": "16"
+                },
+                {
+                    "Image": "art/predictionicons_outcome_empty",
+                    "Title": ""
                 }
             ],
             "SupportedInMultiActions": false,
@@ -115,7 +146,10 @@
     "CategoryIcon": "art/predictionicons_caticon",
     "CodePath": "code.html",
     "PropertyInspectorPath": "prediction_pi.html",
-    "DefaultWindowSize": [1280, 720],
+    "DefaultWindowSize": [
+        1280,
+        720
+    ],
     "Description": "Set easily repeatable predictions for Twitch Chat",
     "Name": "Twitch Prediction Buttons",
     "Icon": "art/predictionicons_icon",
@@ -124,25 +158,25 @@
     "Profiles": [
         {
             "Name": "PredictionUi",
-            "ReadOnly": true,
+            "ReadOnly": false,
             "DeviceType": 0,
             "DontAutoSwitchWhenInstalled": true
         },
         {
             "Name": "PredictionUiXL",
-            "ReadOnly": true,
+            "ReadOnly": false,
             "DeviceType": 2,
             "DontAutoSwitchWhenInstalled": true
         },
         {
             "Name": "PredictionUiMini",
-            "ReadOnly": true,
+            "ReadOnly": false,
             "DeviceType": 1,
             "DontAutoSwitchWhenInstalled": true
         },
         {
             "Name": "PredictionUiMobile",
-            "ReadOnly": true,
+            "ReadOnly": false,
             "DeviceType": 3,
             "DontAutoSwitchWhenInstalled": true
         }

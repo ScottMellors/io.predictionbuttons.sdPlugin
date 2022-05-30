@@ -139,6 +139,18 @@ function setAuthState(context, authState) {
     websocket.send(JSON.stringify(json));
 }
 
+function setOutcomeState(context, stateNum) {
+    var json = {
+        "event": "setState",
+        "context": context,
+        "payload": {
+            "state": stateNum
+        }
+    };
+
+    websocket.send(JSON.stringify(json));
+}
+
 function setLockState(context, lockState) {
     var json = {
         "event": "setState",

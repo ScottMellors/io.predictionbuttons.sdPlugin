@@ -155,8 +155,6 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
             for (let i = 1; i <= activeOutcomes.length; i++) {
                 let outcome = activeOutcomes[i - 1];
 
-                console.log(outcome + " " + `prediction_outcome_${i}`);
-
                 //if > 2, build widget, insert data
                 if (i > 2) {
                     addOutcome(i);

@@ -118,7 +118,7 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
             if (actionObj) {
                 actionObj.onKeyDown(context, settings, coordinates, userDesiredState, device);
             }
-            
+
         } else if (event == "keyUp") {
             var settings = jsonPayload["settings"];
             var coordinates = jsonPayload["coordinates"];
@@ -133,7 +133,7 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
             switch (action) {
                 case "io.predictionbuttons.start":
                     requestGlobalSettings(pluginUUID);
-                    startAction.onWillAppear(context, settings, coordinates);
+                    startAction.onWillAppear(context, settings, coordinates, device);
                     break;
                 default:
                     //get correct variable for id
@@ -141,7 +141,7 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
 
                     let actionObj = willAppearActionSet[actionType];
                     if (actionObj) {
-                        actionObj.onWillAppear(context, settings, coordinates);
+                        actionObj.onWillAppear(context, settings, coordinates, device);
                     }
                     break;
             }
@@ -229,7 +229,7 @@ var startAction = {
         }
     },
 
-    onWillAppear: function (context, settings, coordinates) {
+    onWillAppear: function (context, settings, coordinates, deviceId) {
         //check auth state, set state false if failed
         if (gotGlobalSettings) {
             if (!globalSettings.broadcasterAccessToken) {
@@ -341,7 +341,7 @@ var outcome2Action = {
             showError(context);
         });
     },
-    onWillAppear: function (context, settings, coordinates) {
+    onWillAppear: function (context, settings, coordinates, deviceId) {
         //check auth state, set state false if failed
         if (gotGlobalSettings) {
             //set the label with outcome text
@@ -349,6 +349,76 @@ var outcome2Action = {
         }
     }
 };
+
+let outcomeAction = {
+    type: "io.predictionbuttons.confirmOutcome",
+    onKeyDown: function (context, settings, coordinates, userDesiredState, deviceId) {
+        let outcomeNumber = getOutcomeNumberFromCoords(coordinates, deviceId) - 1;
+        if (outcomeNumber < globalSettings.activeOutcomes.length) {
+            fetch("https://api.twitch.tv/helix/predictions", {
+                method: "PATCH",
+                body: JSON.stringify({
+                    "broadcaster_id": globalSettings.broadcasterId,
+                    "id": globalSettings.activePredictionId,
+                    "status": "RESOLVED",
+                    "winning_outcome_id": globalSettings.activeOutcomes[outcomeNumber].id
+                }),
+                headers: {
+                    Authorization: "Bearer " + globalSettings.broadcasterAccessToken,
+                    "Client-Id": "dx2y2z4epfd3ycn9oho1dnucnd7ou5",
+                    "Content-Type": "application/json"
+                }
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error(response.status);
+                } else {
+                    //clean up settings
+                    globalSettings.activePredictionId = undefined;
+                    globalSettings.activeOutcomes = undefined;
+
+                    saveGlobalSettings(pluginUUID);
+
+                    //go back to default profile
+                    returnToProfile(pluginUUID, devices[deviceId]);
+                }
+            }
+            ).catch((error) => {
+                console.log(error);
+                showError(context);
+            });
+        }
+
+
+    },
+    onWillAppear: function (context, settings, coordinates, deviceId) {
+        let outcomeNumber = getOutcomeNumberFromCoords(coordinates, deviceId) - 1;
+
+        //check auth state, set state false if failed
+        if (gotGlobalSettings && outcomeNumber < globalSettings.activeOutcomes.length) {
+            //set the label with outcome text
+            setTitle(context, globalSettings.activeOutcomes[outcomeNumber].title);
+            setOutcomeState(context, 0);
+        } else {
+            setTitle(context, "");
+            setOutcomeState(context, 1);
+        }
+    }
+};
+
+function getOutcomeNumberFromCoords(coordinates, deviceId) {
+    let outcomeNumber = 1;
+    let deviceType = devices[deviceId].type;
+
+    if (deviceType === 1) {
+        //streamdeck mini
+        //TODO I DUNNO LOL
+    } else {
+        //normal layout should suffice?
+        outcomeNumber = (coordinates.row == 2 ? 0 : 5) + coordinates.column;
+    }
+
+    return outcomeNumber;
+}
 
 var cancelAction = {
     type: "io.predictionbuttons.cancel",
@@ -434,7 +504,7 @@ var lockAction = {
             showError(context);
         }
     },
-    onWillAppear: function (context, settings, coordinates) {
+    onWillAppear: function (context, settings, coordinates, deviceId) {
         var currentLockState = (globalSettings.activePredictionState === "ACTIVE" ? false : true);
         setLockState(context, currentLockState);
     }
@@ -447,10 +517,10 @@ let actionSet = {
 }
 
 let willAppearActionSet = {
-    "lock": lockAction, "confirmoutcome1": outcome1Action, "confirmoutcome2": outcome2Action
+    "lock": lockAction, "confirmoutcome1": outcome1Action, "confirmoutcome2": outcome2Action, "confirmoutcome": outcomeAction
 };
 
 let onKeyDownActionSet = {
     "lock": lockAction, "start": startAction, "cancel": cancelAction, "exit": exitAction,
-    "confirmoutcome1": outcome1Action, "confirmoutcome2": outcome2Action
+    "confirmoutcome1": outcome1Action, "confirmoutcome2": outcome2Action, "confirmoutcome": outcomeAction
 };

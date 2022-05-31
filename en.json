@@ -13,6 +13,14 @@
         "Name": "Exit prediction view",
         "Tooltip": "Exit the prediction control view"
     },
+    "io.predictionbuttons.confirmOutcome": {
+        "Name": "Confirm Outcome",
+        "Tooltip": "Confirm the winning outcome!"
+    },
+    "io.predictionbuttons.confirmOutcomeCustom": {
+        "Name": "Confirm outcome - Custom",
+        "Tooltip": "Confirm the winning outcome! In your layout style!"
+    },
     "io.predictionbuttons.confirmOutcome1": {
         "Name": "Confirm outcome 1",
         "Tooltip": "Confirm the winning outcome as Outcome 1!"
@@ -49,7 +57,8 @@
             "ManualLayout": "Manual Layout",
             "SwapToSubview": "Swap to Subview",
             "ExtraOutcomesLabel": "Extra Outcomes",
-            "ExtraOutcomesButtonLabel": "Add more outcomes (max 10)"
+            "ExtraOutcomesButtonLabel": "Add more outcomes (max 10)",
+            "ConfirmOutcome": "Confirm Outcome"
         }
     }
 }

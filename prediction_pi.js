@@ -109,6 +109,9 @@ function PI(inLanguage) {
         document.getElementById('manual_layout').innerHTML = instance.localization['ManualLayout'];
         document.getElementById('swap_to_subview_title').innerHTML = instance.localization['SwapToSubview'];
         document.getElementById('swap_to_subview_checkbox').innerHTML = "<span></span>" + instance.localization['SwapToSubview'];
+    
+        //outcome label
+        document.getElementById('confirm_outcome_label').innerHTML = instance.localization['ConfirmOutcome'];
     };
 }
 

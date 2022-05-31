@@ -67,7 +67,7 @@
             "VisibleInActionsList": true
         },
         {
-            "Name": "Confirm outcome",
+            "Name": "Confirm Outcome",
             "Icon": "art/predictionicons_caticon",
             "States": [
                 {

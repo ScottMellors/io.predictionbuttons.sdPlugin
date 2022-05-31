@@ -313,7 +313,6 @@ var outcomeCustomAction = {
             setTitle(context, "");
         }
     }
-
 };
 
 var outcome1Action = {
@@ -358,6 +357,11 @@ var outcome1Action = {
             //set the label with outcome text
             setTitle(context, globalSettings.activeOutcomes[0].title);
         }
+
+        //Show Alert / notification for deprecation, asking to download new version of profile.
+        alert("ALERT: This is an out of date profile, you cant access the new outcome options until you update! Delete this profile and trigger a prediction to refresh this.");
+
+        showError(context); //Might be confusing?
     }
 };
 
@@ -402,6 +406,8 @@ var outcome2Action = {
             //set the label with outcome text
             setTitle(context, globalSettings.activeOutcomes[1].title);
         }
+
+        showError(context); //Might be confusing?
     }
 };
 

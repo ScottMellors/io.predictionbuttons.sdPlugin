@@ -158,13 +158,13 @@
     "Profiles": [
         {
             "Name": "PredictionUi",
-            "ReadOnly": false,
+            "ReadOnly": true,
             "DeviceType": 0,
             "DontAutoSwitchWhenInstalled": true
         },
         {
             "Name": "PredictionUiXL",
-            "ReadOnly": false,
+            "ReadOnly": true,
             "DeviceType": 2,
             "DontAutoSwitchWhenInstalled": true
         },

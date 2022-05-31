@@ -412,6 +412,21 @@ function getOutcomeNumberFromCoords(coordinates, deviceId) {
     if (deviceType === 1) {
         //streamdeck mini
         //TODO I DUNNO LOL
+    } else if (deviceType === 2) {
+        //XL Layout
+        switch (coordinates.row) {
+            case 1:
+                outcomeNumber = coordinates.column - 3;
+                break;
+
+            case 2:
+                outcomeNumber = (coordinates.column - 3) + 4;
+                break
+
+            case 3:
+                outcomeNumber = (coordinates.column - 4) + 8;
+                break;
+        }
     } else {
         //normal layout should suffice?
         outcomeNumber = (coordinates.row == 1 ? 0 : 5) + coordinates.column;

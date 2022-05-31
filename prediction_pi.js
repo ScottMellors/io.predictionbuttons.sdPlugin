@@ -143,9 +143,15 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
 
         websocket.send(JSON.stringify(settingsJson));
 
-        if (actionInfo.action == "io.predictionbuttons.start") {
-            setVisibilityOfClassItems("sdpi-heading", "flex");
-            setVisibilityOfClassItems("sdpi-item", "flex");
+        if (actionInfo.action == "io.predictionbuttons.confirmoutcomecustom") {
+            setVisibilityOfClassItems("outcome", "flex");
+            document.getElementById("outcome_select_div").style.visibility = "flex";
+
+            //set outcome select from settings
+            document.getElementById("outcome_select").value = actionInfo.payload.settings.outcomeNumber || 0;
+
+        } else if (actionInfo.action == "io.predictionbuttons.start") {
+            setVisibilityOfClassItems("start", "flex");
 
             let savedPredictionTitle = actionInfo.payload.settings.predictionTitle;
 
@@ -294,14 +300,15 @@ function sendValueToPlugin(type, value) {
 
             }
 
-            console.log(activeOutcomes.length);
-
             payload["predictionTitle"] = document.getElementById("prediction_title").value;
             payload["outcomes"] = activeOutcomes;
             payload["duration"] = document.getElementById("prediction_duration").value;
             payload["profileSwap"] = document.getElementById("profileSwap").checked;
         } else if (type == "authUpdate") {
             payload = value;
+        } else if (type == "outcomeUpdate") {
+            //get value from field
+            payload["outcomeValue"] = document.getElementById("outcome_select").value;
         } else if (type == "showError") {
             payload["show"] = "error";
         }

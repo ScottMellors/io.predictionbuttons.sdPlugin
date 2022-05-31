@@ -48,6 +48,25 @@
             "UUID": "io.predictionbuttons.exit"
         },
         {
+            "Name": "Confirm outcome - Custom",
+            "Icon": "art/predictionicons_caticon",
+            "States": [
+                {
+                    "Image": "art/predictionicons_outcome",
+                    "TitleAlignment": "middle",
+                    "FontSize": "16"
+                },
+                {
+                    "Image": "art/predictionicons_outcome_empty",
+                    "Title": ""
+                }
+            ],
+            "SupportedInMultiActions": false,
+            "Tooltip": "Confirm the winning outcome! In your layout style!",
+            "UUID": "io.predictionbuttons.confirmOutcomeCustom",
+            "VisibleInActionsList": true
+        },
+        {
             "Name": "Confirm outcome",
             "Icon": "art/predictionicons_caticon",
             "States": [
@@ -67,6 +86,7 @@
             "VisibleInActionsList": true
         },
         {
+            "VisibleInActionsList": false,
             "Name": "Confirm outcome 1",
             "Icon": "art/predictionicons_caticon",
             "States": [
@@ -85,6 +105,7 @@
             "UUID": "io.predictionbuttons.confirmOutcome1"
         },
         {
+            "VisibleInActionsList": false,
             "Name": "Confirm outcome 2",
             "Icon": "art/predictionicons_caticon",
             "States": [
@@ -101,24 +122,6 @@
             "SupportedInMultiActions": false,
             "Tooltip": "Confirm the winning outcome as Outcome 2!",
             "UUID": "io.predictionbuttons.confirmOutcome2"
-        },
-        {
-            "Name": "Confirm outcome 3",
-            "Icon": "art/predictionicons_caticon",
-            "States": [
-                {
-                    "Image": "art/predictionicons_outcome",
-                    "TitleAlignment": "middle",
-                    "FontSize": "16"
-                },
-                {
-                    "Image": "art/predictionicons_outcome_empty",
-                    "Title": ""
-                }
-            ],
-            "SupportedInMultiActions": false,
-            "Tooltip": "Confirm the winning outcome as Outcome 3!",
-            "UUID": "io.predictionbuttons.confirmOutcome3"
         },
         {
             "Name": "Lock Prediction",

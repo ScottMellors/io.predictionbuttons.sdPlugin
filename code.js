@@ -146,7 +146,10 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
                     break;
             }
         } else if (event == "sendToPlugin") {
-            if (jsonPayload.hasOwnProperty("predictionTitle")) {
+            if (jsonPayload.hasOwnProperty("outcomeValue")) {
+                settings.outcomeNumber = jsonPayload.outcomeValue;
+                setSettings(context, settings);
+            } else if (jsonPayload.hasOwnProperty("predictionTitle")) {
                 settings.predictionTitle = jsonPayload.predictionTitle;
                 settings.outcomes = jsonPayload.outcomes;
                 settings.duration = jsonPayload.duration;
@@ -259,6 +262,60 @@ var startAction = {
     }
 }
 
+var outcomeCustomAction = {
+    type: "io.predictionbuttons.confirmOutcomeCustom",
+    onKeyDown: function (context, settings, coordinates, userDesiredState, deviceId) {
+        let outcomeNumber = settings.outcomeNumber || 0;
+        if (outcomeNumber < globalSettings.activeOutcomes.length) {
+            fetch("https://api.twitch.tv/helix/predictions", {
+                method: "PATCH",
+                body: JSON.stringify({
+                    "broadcaster_id": globalSettings.broadcasterId,
+                    "id": globalSettings.activePredictionId,
+                    "status": "RESOLVED",
+                    "winning_outcome_id": globalSettings.activeOutcomes[outcomeNumber].id
+                }),
+                headers: {
+                    Authorization: "Bearer " + globalSettings.broadcasterAccessToken,
+                    "Client-Id": "dx2y2z4epfd3ycn9oho1dnucnd7ou5",
+                    "Content-Type": "application/json"
+                }
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error(response.status);
+                } else {
+                    //clean up settings
+                    globalSettings.activePredictionId = undefined;
+                    globalSettings.activeOutcomes = undefined;
+
+                    saveGlobalSettings(pluginUUID);
+
+                    //go back to default profile
+                    returnToProfile(pluginUUID, devices[deviceId]);
+                }
+            }
+            ).catch((error) => {
+                console.log(error);
+                showError(context);
+            });
+        }
+    },
+    onWillAppear: function (context, settings, coordinates, deviceId) {
+        let outcomeNumber = settings.outcomeNumber || 0;
+
+        //check auth state, set state false if failed
+        if (gotGlobalSettings && outcomeNumber < globalSettings.activeOutcomes.length) {
+            //set the label with outcome text
+            setOutcomeState(context, 0);
+            setTitle(context, globalSettings.activeOutcomes[outcomeNumber].title);
+        } else {
+            setOutcomeState(context, 1);
+            setTitle(context, "");
+        }
+    }
+
+};
+
 var outcome1Action = {
     type: "io.predictionbuttons.confirmOutcome1",
     onKeyDown: function (context, settings, coordinates, userDesiredState, deviceId) {
@@ -296,8 +353,6 @@ var outcome1Action = {
         });
     },
     onWillAppear: function (context, settings, coordinates) {
-        console.log(gotGlobalSettings);
-
         //check auth state, set state false if failed
         if (gotGlobalSettings) {
             //set the label with outcome text
@@ -387,8 +442,6 @@ let outcomeAction = {
                 showError(context);
             });
         }
-
-
     },
     onWillAppear: function (context, settings, coordinates, deviceId) {
         let outcomeNumber = getOutcomeNumberFromCoords(coordinates, deviceId);
@@ -532,10 +585,10 @@ let actionSet = {
 }
 
 let willAppearActionSet = {
-    "lock": lockAction, "confirmoutcome1": outcome1Action, "confirmoutcome2": outcome2Action, "confirmoutcome": outcomeAction
+    "lock": lockAction, "confirmoutcome1": outcome1Action, "confirmoutcome2": outcome2Action, "confirmoutcome": outcomeAction, "confimcustomoutcome": outcomeCustomAction
 };
 
 let onKeyDownActionSet = {
-    "lock": lockAction, "start": startAction, "cancel": cancelAction, "exit": exitAction,
+    "lock": lockAction, "start": startAction, "cancel": cancelAction, "exit": exitAction, "confimcustomoutcome": outcomeCustomAction,
     "confirmoutcome1": outcome1Action, "confirmoutcome2": outcome2Action, "confirmoutcome": outcomeAction
 };

@@ -9,11 +9,11 @@
     <script src="prediction_pi.js"></script>
 
     <style type="text/css">
-        .sdpi-item {
+        .start {
             display: none;
         }
 
-        .sdpi-heading {
+        .outcome {
             display: none;
         }
     </style>
@@ -21,8 +21,8 @@
 
 <body>
     <div class="sdpi-wrapper">
-        <div class="sdpi-heading" id="get_started_heading">Get Started</div>
-        <div class="sdpi-item">
+        <div class="sdpi-heading start" id="get_started_heading">Get Started</div>
+        <div class="sdpi-item start">
             <details class="sdpi-item-value">
                 <summary id="twitch_auth_heading">IMPORTANT: Twitch Authentication</summary>
                 <p id="twitch_auth_para_1">We require you to auth to allow creation and management of predictions.</p>
@@ -43,36 +43,36 @@
                 </div>
             </details>
         </div>
-        <div class="sdpi-heading" id="prediction_settings_title">Prediction Settings</div>
-        <div class="sdpi-item">
+        <div class="sdpi-heading start" id="prediction_settings_title">Prediction Settings</div>
+        <div class="sdpi-item start">
             <div class="sdpi-item-label" id="prediction_title_label">Prediction Title</div>
             <input class="sdpi-item-value" id="prediction_title" type="text" value="Will I RIP?"
                 onchange="sendValueToPlugin('predictionUpdate', undefined)">
         </div>
-        <div class="sdpi-item">
+        <div class="sdpi-item start">
             <div class="sdpi-item-label" id="prediction_outcome_1_title">Prediction Outcome 1</div>
             <input class="sdpi-item-value" id="prediction_outcome_1" type="text" value="YES"
                 onchange="sendValueToPlugin('predictionUpdate',1)">
         </div>
-        <div class="sdpi-item">
+        <div class="sdpi-item start">
             <div class="sdpi-item-label" id="prediction_outcome_2_title">Prediction Outcome 2</div>
             <input class="sdpi-item-value" id="prediction_outcome_2" type="text" value="NO"
                 onchange="sendValueToPlugin('predictionUpdate',2)">
         </div>
         <div id="moreOutcomesDiv"></div>
-        <div class="sdpi-item">
+        <div class="sdpi-item start">
             <div class="sdpi-item-label" id="extra_outcomes_title">Extra Outcomes</div>
             <button class="sdpi-item-value" id="addOutcomesButton" onclick="addOutcome()">Add more outcomes (max
                 10)</button>
         </div>
-        <div class="sdpi-item">
+        <div class="sdpi-item start">
             <div class="sdpi-item-label" id="prediction_duration_title">Prediction Duration (Seconds)</div>
             <input class="sdpi-item-value" id="prediction_duration" type="number" value="120"
                 onchange="sendValueToPlugin('predictionUpdate','')">
         </div>
 
-        <div class="sdpi-heading" id="manual_layout">Manual Layout</div>
-        <div type="checkbox" class="sdpi-item" id="single-check">
+        <div class="sdpi-heading start" id="manual_layout">Manual Layout</div>
+        <div type="checkbox" class="sdpi-item start" id="single-check">
             <div class="sdpi-item-label" id="swap_to_subview_title">Swap to Subview</div>
             <div class="sdpi-item-value">
                 <div class="sdpi-item-child">
@@ -83,6 +83,24 @@
                 </div>
             </div>
         </div>
+
+        <div class="sdpi-item outcome" id="outcome_select_div">
+            <div class="sdpi-item-label">Confirm Outcome</div>
+            <select class="sdpi-item-value select" id="outcome_select" onchange="sendValueToPlugin('outcomeUpdate','')">
+                <option value="0">1</option>
+                <option value="1">2</option>
+                <option value="2">3</option>
+                <option value="3">4</option>
+                <option value="4">5</option>
+                <option value="5">6</option>
+                <option value="6">7</option>
+                <option value="7">8</option>
+                <option value="8">9</option>
+                <option value="9">10</option>
+            </select>
+        </div>
+
+
     </div>
 </body>
 

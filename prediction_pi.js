@@ -213,7 +213,7 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
 
 function addOutcome(pos) {
     //get current outcomes length
-    if (activeOutcomes.length < 10) {
+    if (activeOutcomes.length <= 10) {
 
         let newWidget = document.createElement("div");
         newWidget.classList.add("sdpi-item");

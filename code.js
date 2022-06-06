@@ -26,14 +26,21 @@ function loadCorrectProfile(context, device) {
     }
 }
 
-function createPrediction(context, settings, deviceId) {
+function generateOutcomes(settings) {
+    let outcomesObj = [];
+    settings.outcomes.forEach(outcome => {
+        outcomesObj.push({ "title": outcome });
+    });
+    return outcomesObj;
+}
+
+function createPrediction(context, settings, deviceId, outcomesObj) {
     //continue to create;
     fetch("https://api.twitch.tv/helix/predictions", {
         body: JSON.stringify({
             "broadcaster_id": globalSettings.broadcasterId,
             "title": settings.predictionTitle ?? "Will I RIP?",
-            "outcomes": [{ "title": settings.outcome1 ?? "YES" },
-            { "title": settings.outcome2 ?? "NO" }], //DOes not accept more than two atm!
+            "outcomes": outcomesObj,
             "prediction_window": settings.duration ?? 120
         }),
         headers: {
@@ -194,6 +201,9 @@ var startAction = {
                 throw new Error(response.status);
             } else {
                 response.json().then((body) => {
+                    //generate outcomes object eg. ["title": "Yes, give it time."]
+                    let outcomesObj = generateOutcomes(settings);
+
                     if (body.data) {
                         var lastPredictionData = body.data;
                         var lastPrediction = lastPredictionData[0];
@@ -212,10 +222,10 @@ var startAction = {
                                 loadCorrectProfile(pluginUUID, devices[deviceId]);
                             }
                         } else {
-                            createPrediction(context, settings, deviceId);
+                            createPrediction(context, settings, deviceId, outcomesObj);
                         }
                     } else {
-                        createPrediction(context, settings, deviceId);
+                        createPrediction(context, settings, deviceId, outcomesObj);
                     }
                 });
             }
@@ -302,12 +312,13 @@ var outcomeCustomAction = {
     },
     onWillAppear: function (context, settings, coordinates, deviceId) {
         let outcomeNumber = settings.outcomeNumber || 0;
+        let adjustedTitle = globalSettings.activeOutcomes[outcomeNumber].title.replace(/ /g, "\n");
 
         //check auth state, set state false if failed
         if (gotGlobalSettings && outcomeNumber < globalSettings.activeOutcomes.length) {
             //set the label with outcome text
             setOutcomeState(context, 0);
-            setTitle(context, globalSettings.activeOutcomes[outcomeNumber].title);
+            setTitle(context, adjustedTitle);
         } else {
             setOutcomeState(context, 1);
             setTitle(context, "");
@@ -452,11 +463,13 @@ let outcomeAction = {
     onWillAppear: function (context, settings, coordinates, deviceId) {
         let outcomeNumber = getOutcomeNumberFromCoords(coordinates, deviceId);
 
+        let adjustedTitle = globalSettings.activeOutcomes[outcomeNumber].title.replace(/ /g, "\n");
+
         //check auth state, set state false if failed
         if (gotGlobalSettings && outcomeNumber < globalSettings.activeOutcomes.length) {
             //set the label with outcome text
             setOutcomeState(context, 0);
-            setTitle(context, globalSettings.activeOutcomes[outcomeNumber].title);
+            setTitle(context, adjustedTitle);
         } else {
             setOutcomeState(context, 1);
             setTitle(context, "");

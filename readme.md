@@ -14,15 +14,16 @@ You can access the [releases](https://github.com/ScottMellors/io.predictionbutto
 
 At some point you may need to reinstall the app, if the new .streamDeckPlugin doesn't work, you will need to remove it from your plugins folder in **C:\Users\YOURUSERNAME\AppData\Roaming\Elgato\StreamDeck\Plugins** or for Mac Users **~/Library/Application Support/com.elgato.StreamDeck/Plugins/**. Just delete the *io.predictionbuttons.sdPlugin* and restart the app before updating.
 
-## To Do List
-
-- Translations
-- Better art
-- Countdown indicator
-
 ## How can you help?
 
 Translations - Will make a guide soon tm.
+
+Support me on [Ko-fi](https://ko-fi.com/ghostlytuna)! Keep the lights on this project and my other tools! (And my pet hedgehog full of worms)
+
+## To Do List
+
+- Translations
+- Countdown indicator
 
 ## Contact
 

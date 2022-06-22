@@ -311,11 +311,10 @@ var outcomeCustomAction = {
         }
     },
     onWillAppear: function (context, settings, coordinates, deviceId) {
-        let outcomeNumber = settings.outcomeNumber || 0;
-        let adjustedTitle = globalSettings.activeOutcomes[outcomeNumber].title.replace(/ /g, "\n");
-
+        let outcomeNumber = settings.outcomeNumber || undefined;
         //check auth state, set state false if failed
         if (gotGlobalSettings && outcomeNumber < globalSettings.activeOutcomes.length) {
+            let adjustedTitle = globalSettings.activeOutcomes[outcomeNumber].title.replace(/ /g, "\n");
             //set the label with outcome text
             setOutcomeState(context, 0);
             setTitle(context, adjustedTitle);
@@ -462,11 +461,9 @@ let outcomeAction = {
     },
     onWillAppear: function (context, settings, coordinates, deviceId) {
         let outcomeNumber = getOutcomeNumberFromCoords(coordinates, deviceId);
-
-        let adjustedTitle = globalSettings.activeOutcomes[outcomeNumber].title.replace(/ /g, "\n");
-
         //check auth state, set state false if failed
         if (gotGlobalSettings && outcomeNumber < globalSettings.activeOutcomes.length) {
+            let adjustedTitle = globalSettings.activeOutcomes[outcomeNumber].title.replace(/ /g, "\n");
             //set the label with outcome text
             setOutcomeState(context, 0);
             setTitle(context, adjustedTitle);
@@ -483,7 +480,8 @@ function getOutcomeNumberFromCoords(coordinates, deviceId) {
 
     if (deviceType === 1) {
         //streamdeck mini
-        //TODO I DUNNO LOL
+
+        //USes custom buttons
     } else if (deviceType === 2) {
         //XL Layout
         switch (coordinates.row) {
@@ -604,10 +602,10 @@ let actionSet = {
 }
 
 let willAppearActionSet = {
-    "lock": lockAction, "confirmoutcome1": outcome1Action, "confirmoutcome2": outcome2Action, "confirmoutcome": outcomeAction, "confimcustomoutcome": outcomeCustomAction
+    "lock": lockAction, "confirmoutcome1": outcome1Action, "confirmoutcome2": outcome2Action, "confirmoutcome": outcomeAction, "confirmoutcomecustom": outcomeCustomAction
 };
 
 let onKeyDownActionSet = {
-    "lock": lockAction, "start": startAction, "cancel": cancelAction, "exit": exitAction, "confimcustomoutcome": outcomeCustomAction,
+    "lock": lockAction, "start": startAction, "cancel": cancelAction, "exit": exitAction, "confirmoutcomecustom": outcomeCustomAction,
     "confirmoutcome1": outcome1Action, "confirmoutcome2": outcome2Action, "confirmoutcome": outcomeAction
 };

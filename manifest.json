@@ -45,7 +45,8 @@
             ],
             "SupportedInMultiActions": false,
             "Tooltip": "Exit the prediction control view",
-            "UUID": "io.predictionbuttons.exit"
+            "UUID": "io.predictionbuttons.exit",
+            "VisibleInActionsList": false
         },
         {
             "Name": "Confirm outcome - Custom",
@@ -54,7 +55,7 @@
                 {
                     "Image": "art/predictionicons_outcome",
                     "TitleAlignment": "middle",
-                    "FontSize": "16"
+                    "FontSize": "13"
                 },
                 {
                     "Image": "art/predictionicons_outcome_empty",
@@ -83,7 +84,7 @@
             "SupportedInMultiActions": false,
             "Tooltip": "Confirm the winning outcome!",
             "UUID": "io.predictionbuttons.confirmOutcome",
-            "VisibleInActionsList": true
+            "VisibleInActionsList": false
         },
         {
             "VisibleInActionsList": false,

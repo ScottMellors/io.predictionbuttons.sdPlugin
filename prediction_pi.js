@@ -178,9 +178,11 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
                 }
             }
 
-            if (activeOutcomes.length == 10) {
+            if (activeOutcomes.length >= 10) {
                 //disable button
                 document.getElementById("addOutcomesButton").disabled = true;
+            } else {
+                document.getElementById("addOutcomesButton").disabled = false;
             }
 
             let savedDuration = actionInfo.payload.settings.duration;
@@ -250,6 +252,8 @@ function addOutcome(pos) {
         if (activeOutcomes.length == 10) {
             //disable button
             document.getElementById("addOutcomesButton").disabled = true;
+        } else {
+            document.getElementById("addOutcomesButton").disabled = false;
         }
     }
 }
@@ -274,7 +278,7 @@ function sendValueToPlugin(type, value) {
             if (typeof value == 'number') {
                 //update positing with contents
 
-                let updatedValue = document.getElementById(`prediction_outcome_${value}`).value.trim();
+                let updatedValue = document.getElementById(`prediction_outcome_${value}`)?.value.trim() || "";
 
                 if (updatedValue == "") {
 

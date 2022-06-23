@@ -311,7 +311,7 @@ var outcomeCustomAction = {
         }
     },
     onWillAppear: function (context, settings, coordinates, deviceId) {
-        let outcomeNumber = settings.outcomeNumber || undefined;
+        let outcomeNumber = settings.outcomeNumber || 0;
         //check auth state, set state false if failed
         if (gotGlobalSettings && outcomeNumber < globalSettings.activeOutcomes.length) {
             let adjustedTitle = globalSettings.activeOutcomes[outcomeNumber].title.replace(/ /g, "\n");

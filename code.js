@@ -28,6 +28,11 @@ function loadCorrectProfile(context, device) {
 
 function generateOutcomes(settings) {
     let outcomesObj = [];
+
+    if (!settings.outcomes) {
+        settings.outcomes = ["YES", "NO"];
+    }
+
     settings.outcomes.forEach(outcome => {
         outcomesObj.push({ "title": outcome });
     });
@@ -198,6 +203,7 @@ var startAction = {
             }
         }).then(response => {
             if (!response.ok) {
+                console.log(response.status);
                 throw new Error(response.status);
             } else {
                 response.json().then((body) => {

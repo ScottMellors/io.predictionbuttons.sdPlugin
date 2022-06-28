@@ -158,11 +158,7 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
 
             let savedPredictionTitle = actionInfo.payload.settings.predictionTitle;
 
-            if (actionInfo.payload.settings.outcomes.length < 2) {
-                activeOutcomes = ["YES", "NO"];
-            } else {
-                activeOutcomes = actionInfo.payload.settings.outcomes || ["YES", "NO"];
-            }
+            activeOutcomes = actionInfo.payload.settings.outcomes || ["YES", "NO"];
 
             for (let i = 1; i <= activeOutcomes.length; i++) {
                 let outcome = activeOutcomes[i - 1];
@@ -186,7 +182,7 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
             }
 
             let savedDuration = actionInfo.payload.settings.duration;
-            let savedProfileSwap = actionInfo.payload.settings.profileSwap;
+            let savedProfileSwap = actionInfo.payload.settings.profileSwap || true;
 
             //load settings
             document.getElementById('prediction_title').value = savedPredictionTitle || "Will I RIP?";

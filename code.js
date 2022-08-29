@@ -563,7 +563,7 @@ var exitAction = {
 
 var lockAction = {
     type: "io.predictionbuttons.lock",
-    onkeydown: function (context, settings, coordinates, userDesiredState, device) {
+    onKeyDown: function (context, settings, coordinates, userDesiredState, device) {
         //update button state
         if (globalSettings.activePredictionState === "ACTIVE") {
             fetch("https://api.twitch.tv/helix/predictions", {

@@ -157,8 +157,8 @@
     "Description": "Set easily repeatable predictions for Twitch Chat",
     "Name": "Twitch Prediction Buttons",
     "Icon": "art/predictionicons_icon",
-    "URL": "https://predictionbuttons.io",
-    "Version": "1.3.3",
+    "URL": "https://tools.ghostlytuna.co.uk",
+    "Version": "1.4.0",
     "Profiles": [
         {
             "Name": "PredictionUi",

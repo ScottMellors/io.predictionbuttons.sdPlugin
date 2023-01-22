@@ -1,0 +1,64 @@
+{
+    "Description": "Set repeatable predictions for Twitch Chat",
+    "Name": "Twitch Prediction Buttons",
+    "io.predictionbuttons.start": {
+        "Name": "Setup Prediction",
+        "Tooltip": "Start a prediction or control an existing one!"
+    },
+    "io.predictionbuttons.cancel": {
+        "Name": "Cancel Prediction",
+        "Tooltip": "Cancel and Refund spent points"
+    },
+    "io.predictionbuttons.exit": {
+        "Name": "Exit prediction view",
+        "Tooltip": "Exit the prediction control view"
+    },
+    "io.predictionbuttons.confirmOutcome": {
+        "Name": "Confirm Outcome",
+        "Tooltip": "Confirm the winning outcome!"
+    },
+    "io.predictionbuttons.confirmOutcomeCustom": {
+        "Name": "Confirm outcome - Custom",
+        "Tooltip": "Confirm the winning outcome! In your layout style!"
+    },
+    "io.predictionbuttons.confirmOutcome1": {
+        "Name": "Confirm outcome 1",
+        "Tooltip": "Confirm the winning outcome as Outcome 1!"
+    },
+    "io.predictionbuttons.confirmOutcome2": {
+        "Name": "Confirm outcome 2",
+        "Tooltip": "Confirm the winning outcome as Outcome 2!"
+    },
+    "io.predictionbuttons.lock": {
+        "Name": "Lock Prediction",
+        "Tooltip": "Lock the current prediction manually."
+    },
+    "Localization": {
+        "PI": {
+            "GetStarted": "Get Started",
+            "TwitchAuthTitle": "IMPORTANT: Twitch Authentication",
+            "TwitchAuthDesc1": "We require you to auth with one of my other tools to allow creation and management of predictions.",
+            "TwitchAuthDesc2": "Once authorized, copy your access token into the field below.",
+            "TwitchAuthDesc3": "This token may expire, you will need to reauthorize and reapply the code.",
+            "TwitchAuthDesc4": "Having capcha window issues? Try here in an external browser - https://channel-points-tool.com/streamdeck-auth",
+            "GetAccessTokenCTA": "Get AccessToken",
+            "AccessToken": "Access Token",
+            "CheckAuth": "Check Auth",
+            "CheckAuthButton": "Check Auth",
+            "PredictionSettings": "Prediction Settings",
+            "PredictionTitle": "Prediction Title",
+            "ExamplePredictionTitle": "Will I RIP?",
+            "ExamplePredictionOutcome1": "YES",
+            "ExamplePredictionOutcome2": "NO",
+            "PredictionOutcome": "Prediction Outcome ",
+            "PredictionOutcome1": "Prediction Outcome 1",
+            "PredictionOutcome2": "Prediction Outcome 2",
+            "PredictionDuration": "Prediction Duration (Seconds)",
+            "ManualLayout": "Manual Layout",
+            "SwapToSubview": "Swap to Subview",
+            "ExtraOutcomesLabel": "Extra Outcomes",
+            "ExtraOutcomesButtonLabel": "Add more outcomes (max 10)",
+            "ConfirmOutcome": "Confirm Outcome"
+        }
+    }
+}

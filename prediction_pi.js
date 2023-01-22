@@ -232,7 +232,7 @@ function addOutcome(pos) {
 
         let outcomeLabel = document.createElement("div");
         outcomeLabel.classList.add("sdpi-item-label");
-        outcomeLabel.innerHTML = instance.localization['PredictionOutcome'] + (pos || activeOutcomes.length);
+        outcomeLabel.innerHTML = (instance.localization['PredictionOutcome'] ?? "Prediction Outcome ") + (pos || activeOutcomes.length);
 
         newWidget.appendChild(outcomeLabel);
         newWidget.appendChild(outcomeInput);

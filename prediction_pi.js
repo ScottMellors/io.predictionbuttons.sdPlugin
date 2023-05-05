@@ -7,35 +7,113 @@ let uuid;
 let boilerplateOutcomes = ["YES", "NO", "MAYBE", "YES", "NO", "MAYBE", "YES", "NO", "MAYBE", "YES"];
 let activeOutcomes = undefined;
 
+let state;
+
+let server = "http://localhost:3000";
+
+function getOrGenState() {
+
+    if (!state) {
+        //generate unique id
+        state = generateString();
+    }
+
+    return state;
+}
+
+function generateString(length = 8) {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split('');
+
+    let outString = '';
+
+    for (let i = 0; i < length; i++) {
+        outString += chars[Math.floor(Math.random() * chars.length)];
+    }
+
+    return outString;
+}
+
+let authCheckTimer;
+let authCheckStartTime;
+
 function loadAuthWindow() {
-    window.open("https://channel-points-tool.com/streamdeck-auth", "_blank");
+    state = getOrGenState();
+    window.open(`https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=dx2y2z4epfd3ycn9oho1dnucnd7ou5&redirect_uri=${server}/streamdeck-auth-complete&scope=channel:manage:predictions&state=${state}`, "_blank");
+
+    //start listening
+    if (!authCheckTimer) {
+        authCheckStartTime = new Date();
+        authCheckStartTime.setMinutes(authCheckStartTime.getMinutes() + 5);
+
+        authCheckTimer = setInterval(() => {
+            if (Date.now() > authCheckStartTime) {
+                clearInterval(authCheckTimer);
+                return;
+            }
+
+            fetch(`${server}/streamdeck-auth-check/${state}`).then(async (response) => {
+                let body = await response.json();
+
+                //if not undefined, store keys, cancel timer
+                if (response.status == 200) {
+                    if (!body.accessToken || !body.refreshToken) {
+                        clearInterval(authCheckTimer);
+                        return;
+                    }
+
+                    globalSettings.broadcasterAccessToken = body.accessToken;
+                    globalSettings.broadcasterRefreshToken = body.refreshToken;
+
+                    fetch("https://id.twitch.tv/oauth2/validate", {
+                        headers: {
+                            Authorization: "Bearer " + globalSettings.broadcasterAccessToken,
+                            "Client-Id": "dx2y2z4epfd3ycn9oho1dnucnd7ou5",
+                            "Content-Type": "application/json"
+                        }
+                    }).then((response) => {
+                        if (!response.ok) {
+                            console.log("validate - Did not auth - bad response");
+                        } else {
+                            response.json().then((body) => {
+                                globalSettings.broadcasterId = body.user_id;
+                                saveGlobalSettings(uuid);
+                            });
+                        }
+                    }).catch((error) => {
+                        console.log("Did not auth - " + error);
+                    });
+
+                    saveGlobalSettings(uuid);
+
+                    clearInterval(authCheckTimer);
+
+                    state = undefined;
+                }
+            }).catch(e => {
+                console.log(e);
+                clearInterval(authCheckTimer);
+
+                state = undefined;
+            });
+        }, 5000);
+    }
 }
 
 function checkAuth() {
-    //get params
-    let broadcasterAccessToken = document.getElementById("access_token").value;
-
     //send request to server
     fetch("https://id.twitch.tv/oauth2/validate", {
         headers: {
-            Authorization: "Bearer " + broadcasterAccessToken,
+            Authorization: "Bearer " + globalSettings.broadcasterAccessToken,
             "Client-Id": "dx2y2z4epfd3ycn9oho1dnucnd7ou5",
             "Content-Type": "application/json"
         }
     }).then((response) => {
         if (!response.ok) {
-            throw new Error(response.status);
+            console.log("Checkauth() - Did not auth - bad response");
+
+            throw new Error('DidNotAuth');
         } else {
-            response.json().then((body) => {
-                let broadcasterId = body.user_id;
-
-                let authPayload = {};
-
-                authPayload.broadcasterId = broadcasterId;
-                authPayload.broadcasterAccessToken = broadcasterAccessToken;
-
-                sendValueToPlugin("authUpdate", authPayload);
-
+            response.json().then((_) => {
                 //show success dialog
                 let successWindow = window.open();
                 successWindow.document.write("<span style=\"color: #FFFFFF;\">Successfully Authenticated, you're ready to go! <br /><br /> You can now close this window and get on with the predictions. <br /><br /> Got any suggestions or questions? Check the <a style=\"color: #FFFFFF;\" href=\"https://discordapp.com/invite/S67P7UH\" target=\"_blank\">Discord</a>.</span>");
@@ -89,6 +167,7 @@ function PI(inLanguage) {
         document.getElementById('twitch_auth_para_4').innerHTML = instance.localization['TwitchAuthDesc4'];
         document.getElementById('get_access_token_button').innerHTML = instance.localization['GetAccessTokenCTA'];
         document.getElementById('access_token_heading').innerHTML = instance.localization['AccessToken'];
+        document.getElementById('refresh_token_heading').innerHTML = instance.localization['RefreshToken'];
         document.getElementById('check_auth_heading').innerHTML = instance.localization['CheckAuth'];
         document.getElementById('check_auth_heading').innerHTML = instance.localization['CheckAuthButton'];
 
@@ -202,11 +281,23 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
 
         if (event === "didReceiveGlobalSettings") {
             globalSettings = jsonPayload.settings;
-
-            //load settings to view
-            document.getElementById("access_token").value = globalSettings.broadcasterAccessToken;
         }
     };
+}
+
+async function refreshTokenPI() {
+    if (globalSettings.broadcasterRefreshToken) {
+        let newAccessToken = await refreshAccessToken(globalSettings.broadcasterRefreshToken);
+
+        if (newAccessToken) {
+            globalSettings.broadcasterAccessToken = newAccessToken;
+            saveGlobalSettings(uuid);
+        } else {
+            console.log("broadcasterRefreshToken refresh failed");
+        }
+    } else {
+        console.log("broadcasterRefreshToken not found");
+    }
 }
 
 function addOutcome(pos) {

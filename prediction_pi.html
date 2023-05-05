@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
     <title>io.predictionbuttons PI</title>
     <link rel="stylesheet" href="sdpi.css">
+    <script src="common.js"></script>
     <script src="utils.js"></script>
     <script src="prediction_pi.js"></script>
 
@@ -26,20 +27,20 @@
             <details class="sdpi-item-value">
                 <summary id="twitch_auth_heading">IMPORTANT: Twitch Authentication</summary>
                 <p id="twitch_auth_para_1">We require you to auth to allow creation and management of predictions.</p>
-                <p id="twitch_auth_para_2">Once authorized, copy your access token into the field below.</p>
-                <p id="twitch_auth_para_3">This token may expire, you will need to reauthorize and reapply the code.</p>
-                <button onclick="loadAuthWindow()" class="sdpi-item-value" id="get_access_token_button">Get
-                    AccessToken</button>
-                <p id="twitch_auth_para_4">Having capcha window issues? Try here in an external browser -
-                    <strong>https://channel-points-tool.com/streamdeck-auth</strong>
-                </p>
+                <p id="twitch_auth_para_2">This token may expire, we will be able to attempt to refresh automatically
+                    but you may still need to reauthorize if that fails.</p>
                 <div class="sdpi-item">
-                    <div class="sdpi-item-label" id="access_token_heading">Access Token</div>
-                    <input class="sdpi-item-value" id="access_token" type="password" value="">
+                    <div class="sdpi-item-label" id="check_auth_heading">Authorise</div>
+                    <button onclick="loadAuthWindow()" class="sdpi-item-value"
+                        id="get_access_token_button">Get Started</button>
                 </div>
                 <div class="sdpi-item">
-                    <div class="sdpi-item-label" id="check_auth_heading">Check Auth</div>
+                    <div class="sdpi-item-label">Issue?</div>
                     <button onclick="checkAuth()" class="sdpi-item-value" id="check_auth_button">Check Auth</button>
+                </div>
+                <div class="sdpi-item">
+                    <div class="sdpi-item-label">Dev Only</div>
+                    <button onclick="refreshTokenPI()" class="sdpi-item-value" id="toggle_auth_button">Toggle Reauth</button>
                 </div>
             </details>
         </div>

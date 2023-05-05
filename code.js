@@ -168,11 +168,6 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
                 settings.profileSwap = jsonPayload.profileSwap;
 
                 setSettings(context, settings);
-            } else if (jsonPayload.hasOwnProperty("broadcasterId")) {
-                globalSettings.broadcasterId = jsonPayload.broadcasterId;
-                globalSettings.broadcasterAccessToken = jsonPayload.broadcasterAccessToken;
-
-                saveGlobalSettings(pluginUUID);
             } else if (jsonPayload.hasOwnProperty("show")) {
                 showError();
             }
@@ -263,7 +258,14 @@ var startAction = {
                     }
                 }).then((response) => {
                     if (!response.ok) {
-                        throw new Error(response.status);
+                        //Do reauth flow iwht refresh token
+                        if (globalSettings.broadcasterRefreshToken) {
+                            refreshAccessToken(globalSettings.broadcasterRefreshToken);
+                        } else {
+                            //show error
+                            console.log(error);
+                            setAuthState(context, false);
+                        }
                     } else {
                         setAuthState(context, true);
                     }

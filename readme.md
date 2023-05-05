@@ -4,7 +4,7 @@ This is a plugin for the Elgato Streamdeck enabling users to setup repeatable pr
 
 ## How it works
 
-Using an authing app on my [Channel Points website](https://channel-points-tool.com), users add an access code from the generator and can then setup predictions etc. When a prediction is initiated, the user is directed to a subview where they can directly control a prediction.
+Get started by using the auth section in the start prediction action. This system will save those values locally, and then use them, reauthorise them when they expire and handle it all for you.
 
 ## Getting the app
 

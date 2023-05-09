@@ -1,4 +1,3 @@
-var lockTimer;
 var globalSettings = {};
 
 var websocket = null;
@@ -65,8 +64,6 @@ function createPrediction(context, settings, deviceId, outcomesObj) {
                 globalSettings.activeOutcomes = body.data[0].outcomes;
 
                 globalSettings.activePredictionState = "ACTIVE";
-
-                startDurationTimer(context, settings.duration ?? 120);
 
                 saveGlobalSettings(pluginUUID);
 
@@ -532,12 +529,6 @@ var cancelAction = {
             if (!response.ok) {
                 throw new Error(response.status);
             } else {
-
-                if (lockTimer) {
-                    clearTimeout(lockTimer);
-                    lockTimer = undefined;
-                }
-
                 //clean up settings
                 globalSettings.activePredictionId = undefined;
                 globalSettings.activeOutcomes = undefined;
@@ -597,7 +588,7 @@ var lockAction = {
             showError(context);
         }
     },
-    onWillAppear: function (context, settings, coordinates, deviceId) {
+    onWillAppear: function (context, settings, coordinates, deviceId) {        
         var currentLockState = (globalSettings.activePredictionState === "ACTIVE" ? false : true);
         setLockState(context, currentLockState);
     }

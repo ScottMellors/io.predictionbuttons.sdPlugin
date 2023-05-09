@@ -183,11 +183,3 @@ function setLockState(context, lockState) {
 
     websocket.send(JSON.stringify(json));
 }
-
-function startDurationTimer(context, duration) {
-    locktimer = setTimeout(() => {
-        globalSettings.activePredictionState = "LOCKED";
-        setLockState(context, true);
-        locktimer = undefined;
-    }, duration * 1000);
-}

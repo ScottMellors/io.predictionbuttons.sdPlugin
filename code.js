@@ -21,7 +21,7 @@ function loadCorrectProfile(context, device) {
             loadProfile(context, device, "PredictionUi");
             break;
         default:
-            console.log("Device type not found! - " + device.type);
+            logToFile(pluginUUID,"Device type not found! - " + device.type);
             break;
     }
 }
@@ -80,7 +80,7 @@ function createPrediction(context, settings, deviceId, outcomesObj) {
         }
     }).catch((reason) => {
         showError(context);
-        console.log(reason);
+        logToFile(pluginUUID,reason);
     });
 }
 
@@ -198,7 +198,7 @@ var startAction = {
             }
         }).then(response => {
             if (!response.ok) {
-                console.log(response.status);
+                logToFile(pluginUUID,response.status);
                 throw new Error(response.status);
             } else {
                 response.json().then((body) => {
@@ -263,14 +263,14 @@ var startAction = {
                             refreshAccessToken(globalSettings.broadcasterRefreshToken);
                         } else {
                             //show error
-                            console.log(error);
+                            logToFile(pluginUUID,error);
                             setAuthState(context, false);
                         }
                     } else {
                         setAuthState(context, true);
                     }
                 }).catch((error) => {
-                    console.log(error);
+                    logToFile(pluginUUID,error);
                     setAuthState(context, false);
                 });
             }
@@ -313,7 +313,7 @@ var outcomeCustomAction = {
                 }
             }
             ).catch((error) => {
-                console.log(error);
+                logToFile(pluginUUID,error);
                 showError(context);
             });
         }
@@ -365,7 +365,7 @@ var outcome1Action = {
             }
         }
         ).catch((error) => {
-            console.log(error);
+            logToFile(pluginUUID,error);
             showError(context);
         });
     },
@@ -414,7 +414,7 @@ var outcome2Action = {
             }
         }
         ).catch((error) => {
-            console.log(error);
+            logToFile(pluginUUID,error);
             showError(context);
         });
     },
@@ -462,7 +462,7 @@ let outcomeAction = {
                 }
             }
             ).catch((error) => {
-                console.log(error);
+                logToFile(pluginUUID,error);
                 showError(context);
             });
         }
@@ -550,7 +550,7 @@ var cancelAction = {
             }
         }
         ).catch((error) => {
-            console.log(error);
+            logToFile(pluginUUID,error);
             showError(context);
         });
     }
@@ -590,7 +590,7 @@ var lockAction = {
                 }
             }
             ).catch((error) => {
-                console.log(error);
+                logToFile(pluginUUID,error);
                 showError(context);
             });
         } else {

@@ -1,3 +1,5 @@
+let DEBUG = true;
+
 var DestinationEnum = Object.freeze({ "HARDWARE_AND_SOFTWARE": 0, "HARDWARE_ONLY": 1, "SOFTWARE_ONLY": 2 })
 
 // Save global settings
@@ -149,6 +151,25 @@ function setOutcomeState(context, stateNum) {
     };
 
     websocket.send(JSON.stringify(json));
+}
+
+function logToFile(context, message) {
+
+    if (DEBUG) {
+        console.log(message);
+    }
+
+    if (context) {
+        var json = {
+            "event": "logMessage",
+            "context": context,
+            "payload": {
+                "message": message
+            }
+        };
+
+        websocket.send(JSON.stringify(json));
+    }
 }
 
 function setLockState(context, lockState) {

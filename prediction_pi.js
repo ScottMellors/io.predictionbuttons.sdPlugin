@@ -2,14 +2,14 @@ let globalSettings = {};
 let actionInfo = {};
 let websocket = null;
 let pluginAction = null;
-let uuid;
+let pluginUUID;
 
 let boilerplateOutcomes = ["YES", "NO", "MAYBE", "YES", "NO", "MAYBE", "YES", "NO", "MAYBE", "YES"];
 let activeOutcomes = undefined;
 
 let state;
 
-let server = "http://localhost:3000";
+let server = "https://channel-points-tool.com";
 
 function getOrGenState() {
 
@@ -72,25 +72,25 @@ function loadAuthWindow() {
                         }
                     }).then((response) => {
                         if (!response.ok) {
-                            console.log("validate - Did not auth - bad response");
+                            logToFile(pluginUUID, "validate - Did not auth - bad response");
                         } else {
                             response.json().then((body) => {
                                 globalSettings.broadcasterId = body.user_id;
-                                saveGlobalSettings(uuid);
+                                saveGlobalSettings(pluginUUID);
                             });
                         }
                     }).catch((error) => {
-                        console.log("Did not auth - " + error);
+                        logToFile(pluginUUID, "Did not auth - " + error);
                     });
 
-                    saveGlobalSettings(uuid);
+                    saveGlobalSettings(pluginUUID);
 
                     clearInterval(authCheckTimer);
 
                     state = undefined;
                 }
             }).catch(e => {
-                console.log(e);
+                logToFile(pluginUUID, e);
                 clearInterval(authCheckTimer);
 
                 state = undefined;
@@ -100,33 +100,44 @@ function loadAuthWindow() {
 }
 
 function checkAuth() {
-    //send request to server
-    fetch("https://id.twitch.tv/oauth2/validate", {
-        headers: {
-            Authorization: "Bearer " + globalSettings.broadcasterAccessToken,
-            "Client-Id": "dx2y2z4epfd3ycn9oho1dnucnd7ou5",
-            "Content-Type": "application/json"
-        }
-    }).then((response) => {
-        if (!response.ok) {
-            console.log("Checkauth() - Did not auth - bad response");
 
-            throw new Error('DidNotAuth');
-        } else {
-            response.json().then((_) => {
-                //show success dialog
-                let successWindow = window.open();
-                successWindow.document.write("<span style=\"color: #FFFFFF;\">Successfully Authenticated, you're ready to go! <br /><br /> You can now close this window and get on with the predictions. <br /><br /> Got any suggestions or questions? Check the <a style=\"color: #FFFFFF;\" href=\"https://discordapp.com/invite/S67P7UH\" target=\"_blank\">Discord</a>.</span>");
-            });
-        }
-    }).catch((error) => {
-        console.log("Did not auth");
+    if (globalSettings.broadcasterAccessToken) {
+        //send request to server
+        fetch("https://id.twitch.tv/oauth2/validate", {
+            headers: {
+                Authorization: "Bearer " + globalSettings.broadcasterAccessToken,
+                "Client-Id": "dx2y2z4epfd3ycn9oho1dnucnd7ou5",
+                "Content-Type": "application/json"
+            }
+        }).then((response) => {
+            if (!response.ok) {
+                logToFile(pluginUUID, "Checkauth() - Did not auth - bad response");
+
+                throw new Error('DidNotAuth');
+            } else {
+                FFFFFF
+                response.json().then((_) => {
+                    //show success dialog
+                    let successWindow = window.open();
+                    successWindow.document.write("<span style=\"color: #FFFFFF;\">Successfully Authenticated, you're ready to go! <br /><br /> You can now close this window and get on with the predictions. <br /><br /> Got any suggestions or questions? Check the <a style=\"color: #FFFFFF;\" href=\"https://discordapp.com/invite/S67P7UH\" target=\"_blank\">Discord</a>.</span>");
+                });
+            }
+        }).catch((error) => {
+            logToFile(pluginUUID, "Did not auth");
+            sendValueToPlugin("showError", "");
+
+            //show error dialog
+            let errorWindow = window.open();
+            errorWindow.document.write(`<span style="color: #FFFFFF;">Oh no. The provided access token didn't authenticate for some reason.  <br /><br /> REASON: ${error}  <br /><br />If you require help, check over at the <a style="color: #FFFFFF;" href="https://discordapp.com/invite/S67P7UH" target="_blank">GhostlyTuna discord</a> for assistance!</span>`);
+        });
+    } else {
+        logToFile(pluginUUID, "Did not auth - no broadcasterAccessToken");
         sendValueToPlugin("showError", "");
 
         //show error dialog
         let errorWindow = window.open();
-        errorWindow.document.write(`<span style="color: #FFFFFF;">Oh no. The provided access token didn't authenticate for some reason.  <br /><br /> REASON: ${error}  <br /><br />If you require help, check over at the <a style="color: #FFFFFF;" href="https://discordapp.com/invite/S67P7UH" target="_blank">GhostlyTuna discord</a> for assistance!</span>`);
-    });
+        errorWindow.document.write(`<span style="color: #FFFFFF;">Oh no. The provided access token didn't authenticate for some reason.  <br /><br /> REASON: NO CREDS <br /><br />If you require help, check over at the <a style="color: #FFFFFF;" href="https://discordapp.com/invite/S67P7UH" target="_blank">GhostlyTuna discord</a> for assistance!</span>`);
+    }
 }
 
 let instance;
@@ -147,7 +158,7 @@ function PI(inLanguage) {
             // Localize the PI
             instance.localize();
         } else {
-            console.log(inLocalization);
+            logToFile(pluginUUID, inLocalization);
         }
     });
 
@@ -195,7 +206,7 @@ function PI(inLanguage) {
 }
 
 function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, inActionInfo) {
-    uuid = inUUID;
+    pluginUUID = inUUID;
     // please note: the incoming arguments are of type STRING, so
     // in case of the inActionInfo, we must parse it into JSON first
     actionInfo = JSON.parse(inActionInfo); // cache the info
@@ -213,14 +224,14 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
     websocket.onopen = function () {
         let json = {
             event: inRegisterEvent,
-            uuid: uuid
+            uuid: pluginUUID
         };
         // register property inspector to Stream Deck
         websocket.send(JSON.stringify(json));
 
         let settingsJson = {
             'event': 'getGlobalSettings',
-            'context': uuid
+            'context': pluginUUID
         };
 
         websocket.send(JSON.stringify(settingsJson));
@@ -291,12 +302,12 @@ async function refreshTokenPI() {
 
         if (newAccessToken) {
             globalSettings.broadcasterAccessToken = newAccessToken;
-            saveGlobalSettings(uuid);
+            saveGlobalSettings(pluginUUID);
         } else {
-            console.log("broadcasterRefreshToken refresh failed");
+            logToFile(pluginUUID, "broadcasterRefreshToken refresh failed");
         }
     } else {
-        console.log("broadcasterRefreshToken not found");
+        logToFile(pluginUUID, "broadcasterRefreshToken not found");
     }
 }
 
@@ -410,7 +421,7 @@ function sendValueToPlugin(type, value) {
         const json = {
             "action": actionInfo['action'],
             "event": "sendToPlugin",
-            "context": uuid,
+            "context": pluginUUID,
             "payload": payload
         };
         websocket.send(JSON.stringify(json));

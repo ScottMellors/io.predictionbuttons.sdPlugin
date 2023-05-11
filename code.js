@@ -81,6 +81,24 @@ function createPrediction(context, settings, deviceId, outcomesObj) {
     });
 }
 
+async function refreshToken() {
+    if (globalSettings.broadcasterRefreshToken) {
+        let newAccessToken = await refreshAccessToken(globalSettings.broadcasterRefreshToken);
+
+        if (newAccessToken) {
+            globalSettings.broadcasterAccessToken = newAccessToken;
+            saveGlobalSettings(pluginUUID);
+            setAuthState(pluginUUID, true);
+        } else {
+            logToFile(pluginUUID, "broadcasterRefreshToken refresh failed");
+            setAuthState(pluginUUID, false);
+        }
+    } else {
+        logToFile(pluginUUID, "broadcasterRefreshToken not found");
+        setAuthState(pluginUUID, false);
+    }
+}
+
 function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, inInfo) {
     pluginUUID = inPluginUUID;
 
@@ -257,7 +275,7 @@ var startAction = {
                     if (!response.ok) {
                         //Do reauth flow iwht refresh token
                         if (globalSettings.broadcasterRefreshToken) {
-                            refreshAccessToken(globalSettings.broadcasterRefreshToken);
+                            refreshToken();
                         } else {
                             //show error
                             logToFile(pluginUUID,error);

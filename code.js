@@ -3,6 +3,7 @@ var globalSettings = {};
 var websocket = null;
 var pluginUUID = null;
 var gotGlobalSettings = false;
+var recentlyAuthorised = false;
 var devices;
 
 function loadCorrectProfile(context, device) {
@@ -20,7 +21,7 @@ function loadCorrectProfile(context, device) {
             loadProfile(context, device, "PredictionUi");
             break;
         default:
-            logToFile(pluginUUID,"Device type not found! - " + device.type);
+            logToFile(pluginUUID, "Device type not found! - " + device.type);
             break;
     }
 }
@@ -77,26 +78,32 @@ function createPrediction(context, settings, deviceId, outcomesObj) {
         }
     }).catch((reason) => {
         showError(context);
-        logToFile(pluginUUID,reason);
+        logToFile(pluginUUID, reason);
     });
 }
 
 async function refreshToken() {
+    let authd = false;
     if (globalSettings.broadcasterRefreshToken) {
         let newAccessToken = await refreshAccessToken(globalSettings.broadcasterRefreshToken);
+        console.log("Refreshing token");
 
         if (newAccessToken) {
+            console.log("got new access token");
             globalSettings.broadcasterAccessToken = newAccessToken;
             saveGlobalSettings(pluginUUID);
-            setAuthState(pluginUUID, true);
+            authd = true;
         } else {
             logToFile(pluginUUID, "broadcasterRefreshToken refresh failed");
-            setAuthState(pluginUUID, false);
+            authd = false;
         }
     } else {
         logToFile(pluginUUID, "broadcasterRefreshToken not found");
-        setAuthState(pluginUUID, false);
+        authd = false;
     }
+
+    setAuthState(pluginUUID, authd);
+    return authd;
 }
 
 function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, inInfo) {
@@ -160,7 +167,6 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
             switch (action) {
                 case "io.predictionbuttons.start":
                     requestGlobalSettings(pluginUUID);
-                    startAction.onWillAppear(context, settings, coordinates, device);
                     break;
                 default:
                     //get correct variable for id
@@ -203,51 +209,53 @@ var startAction = {
 
     onKeyDown: function (context, settings, coordinates, userDesiredState, deviceId) {
 
-        fetch("https://api.twitch.tv/helix/predictions?" + new URLSearchParams({
-            "broadcaster_id": globalSettings.broadcasterId,
-        }), {
-            headers: {
-                Authorization: "Bearer " + globalSettings.broadcasterAccessToken,
-                "Client-Id": "dx2y2z4epfd3ycn9oho1dnucnd7ou5",
-                "Content-Type": "application/json"
-            }
-        }).then(response => {
-            if (!response.ok) {
-                logToFile(pluginUUID,response.status);
-                throw new Error(response.status);
-            } else {
-                response.json().then((body) => {
-                    //generate outcomes object eg. ["title": "Yes, give it time."]
-                    let outcomesObj = generateOutcomes(settings);
+        if (gotGlobalSettings) {
+            if (recentlyAuthorised == true) {
+                fireOffPrediction(context, settings, deviceId);
+            } else
+                if (!globalSettings.broadcasterAccessToken) {
+                    setAuthState(context, false);
+                } else {
+                    //check auth state
+                    fetch("https://id.twitch.tv/oauth2/validate", {
+                        headers: {
+                            Authorization: "Bearer " + globalSettings.broadcasterAccessToken,
+                            "Client-Id": "dx2y2z4epfd3ycn9oho1dnucnd7ou5",
+                            "Content-Type": "application/json"
+                        }
+                    }).then(async (response) => {
+                        if (!response.ok) {
+                            //Do reauth flow iwht refresh token
+                            if (globalSettings.broadcasterRefreshToken) {
+                                let success = await refreshToken();
 
-                    if (body.data) {
-                        var lastPredictionData = body.data;
-                        var lastPrediction = lastPredictionData[0];
-                        if (lastPrediction.status === "ACTIVE" || lastPrediction.status === "LOCKED") {
-
-                            if (lastPrediction.id != globalSettings.activePredictionId) {
-                                //resume remote started prediction
-                                globalSettings.activePredictionId = lastPrediction.id;
-                                globalSettings.activeOutcomes = lastPrediction.outcomes;
-                                globalSettings.activePredictionState = lastPrediction.status;
-                            }
-
-                            saveGlobalSettings(pluginUUID);
-
-                            if (settings.profileSwap != false) {
-                                loadCorrectProfile(pluginUUID, devices[deviceId]);
+                                if (success == true) {
+                                    //do continue
+                                    fireOffPrediction(context, settings, deviceId);
+                                } else {
+                                    //alert
+                                    showError(context);
+                                }
+                            } else {
+                                //show error
+                                logToFile(pluginUUID, "234 - " + response.status + " " + response.statusText);
+                                setAuthState(context, false);
                             }
                         } else {
-                            createPrediction(context, settings, deviceId, outcomesObj);
+                            setAuthState(context, true);
+
+                            recentlyAuthorised = true;
+
+                            fireOffPrediction(context, settings, deviceId);
                         }
-                    } else {
-                        createPrediction(context, settings, deviceId, outcomesObj);
-                    }
-                });
-            }
-        }).catch((e) => {
-            showError(context);
-        });
+                    }).catch((error) => {
+                        logToFile(pluginUUID, "286 - " + error);
+                        setAuthState(context, false);
+                    });
+                }
+        } else {
+            setAuthState(context, true);
+        }
     },
 
     onKeyUp: function (context, settings, coordinates, userDesiredState) {
@@ -257,42 +265,54 @@ var startAction = {
             setAuthState(context, true);
         }
     },
+}
 
-    onWillAppear: function (context, settings, coordinates, deviceId) {
-        //check auth state, set state false if failed
-        if (gotGlobalSettings) {
-            if (!globalSettings.broadcasterAccessToken) {
-                setAuthState(context, false);
-            } else {
-                //check auth state
-                fetch("https://id.twitch.tv/oauth2/validate", {
-                    headers: {
-                        Authorization: "Bearer " + globalSettings.broadcasterAccessToken,
-                        "Client-Id": "dx2y2z4epfd3ycn9oho1dnucnd7ou5",
-                        "Content-Type": "application/json"
-                    }
-                }).then((response) => {
-                    if (!response.ok) {
-                        //Do reauth flow iwht refresh token
-                        if (globalSettings.broadcasterRefreshToken) {
-                            refreshToken();
-                        } else {
-                            //show error
-                            logToFile(pluginUUID,error);
-                            setAuthState(context, false);
+function fireOffPrediction(context, settings, deviceId) {
+    fetch("https://api.twitch.tv/helix/predictions?" + new URLSearchParams({
+        "broadcaster_id": globalSettings.broadcasterId,
+    }), {
+        headers: {
+            Authorization: "Bearer " + globalSettings.broadcasterAccessToken,
+            "Client-Id": "dx2y2z4epfd3ycn9oho1dnucnd7ou5",
+            "Content-Type": "application/json"
+        }
+    }).then(response => {
+        if (!response.ok) {
+            logToFile(pluginUUID, response.status);
+            throw new Error(response.status);
+        } else {
+            response.json().then((body) => {
+                //generate outcomes object eg. ["title": "Yes, give it time."]
+                let outcomesObj = generateOutcomes(settings);
+
+                if (body.data) {
+                    var lastPredictionData = body.data;
+                    var lastPrediction = lastPredictionData[0];
+                    if (lastPrediction.status === "ACTIVE" || lastPrediction.status === "LOCKED") {
+
+                        if (lastPrediction.id != globalSettings.activePredictionId) {
+                            //resume remote started prediction
+                            globalSettings.activePredictionId = lastPrediction.id;
+                            globalSettings.activeOutcomes = lastPrediction.outcomes;
+                            globalSettings.activePredictionState = lastPrediction.status;
+                        }
+
+                        saveGlobalSettings(pluginUUID);
+
+                        if (settings.profileSwap != false) {
+                            loadCorrectProfile(pluginUUID, devices[deviceId]);
                         }
                     } else {
-                        setAuthState(context, true);
+                        createPrediction(context, settings, deviceId, outcomesObj);
                     }
-                }).catch((error) => {
-                    logToFile(pluginUUID,error);
-                    setAuthState(context, false);
-                });
-            }
-        } else {
-            setAuthState(context, true);
+                } else {
+                    createPrediction(context, settings, deviceId, outcomesObj);
+                }
+            });
         }
-    }
+    }).catch((e) => {
+        showError(context);
+    });
 }
 
 var outcomeCustomAction = {
@@ -328,7 +348,7 @@ var outcomeCustomAction = {
                 }
             }
             ).catch((error) => {
-                logToFile(pluginUUID,error);
+                logToFile(pluginUUID, error);
                 showError(context);
             });
         }
@@ -380,7 +400,7 @@ var outcome1Action = {
             }
         }
         ).catch((error) => {
-            logToFile(pluginUUID,error);
+            logToFile(pluginUUID, error);
             showError(context);
         });
     },
@@ -429,7 +449,7 @@ var outcome2Action = {
             }
         }
         ).catch((error) => {
-            logToFile(pluginUUID,error);
+            logToFile(pluginUUID, error);
             showError(context);
         });
     },
@@ -477,7 +497,7 @@ let outcomeAction = {
                 }
             }
             ).catch((error) => {
-                logToFile(pluginUUID,error);
+                logToFile(pluginUUID, error);
                 showError(context);
             });
         }
@@ -559,7 +579,7 @@ var cancelAction = {
             }
         }
         ).catch((error) => {
-            logToFile(pluginUUID,error);
+            logToFile(pluginUUID, error);
             showError(context);
         });
     }
@@ -599,14 +619,14 @@ var lockAction = {
                 }
             }
             ).catch((error) => {
-                logToFile(pluginUUID,error);
+                logToFile(pluginUUID, error);
                 showError(context);
             });
         } else {
             showError(context);
         }
     },
-    onWillAppear: function (context, settings, coordinates, deviceId) {        
+    onWillAppear: function (context, settings, coordinates, deviceId) {
         var currentLockState = (globalSettings.activePredictionState === "ACTIVE" ? false : true);
         setLockState(context, currentLockState);
     }

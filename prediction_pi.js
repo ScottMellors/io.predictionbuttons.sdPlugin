@@ -115,7 +115,6 @@ function checkAuth() {
 
                 throw new Error('DidNotAuth');
             } else {
-                FFFFFF
                 response.json().then((_) => {
                     //show success dialog
                     let successWindow = window.open();

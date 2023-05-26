@@ -4,7 +4,7 @@ This is a plugin for the Elgato Streamdeck enabling users to setup repeatable pr
 
 ## How it works
 
-Get started by using the auth section in the start prediction action. This system will save those values locally, and then use them, reauthorise them when they expire and handle it all for you.
+Get started by using the auth section in the start prediction action. This system will save the authroisation keys locally, reauthorise the keys when they expire and handle it all for you.
 
 ## Getting the app
 

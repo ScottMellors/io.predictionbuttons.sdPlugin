@@ -6,6 +6,8 @@ var gotGlobalSettings = false;
 var recentlyAuthorised = false;
 var devices;
 
+let currentlyBusy = false;
+
 function loadCorrectProfile(context, device) {
     switch (device.type) {
         case 3:
@@ -209,13 +211,16 @@ var startAction = {
 
     onKeyDown: function (context, settings, coordinates, userDesiredState, deviceId) {
 
-        if (gotGlobalSettings) {
+        if (currentlyBusy == true) {
+            return;
+        } else if (gotGlobalSettings) {
             if (recentlyAuthorised == true) {
                 fireOffPrediction(context, settings, deviceId);
-            } else
+            } else {
                 if (!globalSettings.broadcasterAccessToken) {
                     setAuthState(context, false);
                 } else {
+                    updateStartButton(context, true);
                     //check auth state
                     fetch("https://id.twitch.tv/oauth2/validate", {
                         headers: {
@@ -224,35 +229,41 @@ var startAction = {
                             "Content-Type": "application/json"
                         }
                     }).then(async (response) => {
+
                         if (!response.ok) {
                             //Do reauth flow iwht refresh token
                             if (globalSettings.broadcasterRefreshToken) {
                                 let success = await refreshToken();
-
+                                updateStartButton(context, false);
                                 if (success == true) {
                                     //do continue
                                     fireOffPrediction(context, settings, deviceId);
                                 } else {
                                     //alert
                                     showError(context);
+                                    setAuthState(context, false);
                                 }
                             } else {
+                                updateStartButton(context, false);
+
                                 //show error
                                 logToFile(pluginUUID, "234 - " + response.status + " " + response.statusText);
                                 setAuthState(context, false);
                             }
                         } else {
+                            updateStartButton(context, false);
+
                             setAuthState(context, true);
-
                             recentlyAuthorised = true;
-
                             fireOffPrediction(context, settings, deviceId);
                         }
                     }).catch((error) => {
+                        updateStartButton(context, false);
                         logToFile(pluginUUID, "286 - " + error);
                         setAuthState(context, false);
                     });
                 }
+            }
         } else {
             setAuthState(context, true);
         }
@@ -265,6 +276,17 @@ var startAction = {
             setAuthState(context, true);
         }
     },
+}
+
+function updateStartButton(context, busyUpdate) {
+    currentlyBusy = busyUpdate;
+    if (busyUpdate == true) {
+        setImage(context, "art/predictionicons_start.png");
+    } else if (busyUpdate == false) {
+        setImage(context, "art/predictionicons_wait.png");
+    } else {
+        console.log("busyUpdate not booly - " + busyUpdate);
+    }
 }
 
 function fireOffPrediction(context, settings, deviceId) {

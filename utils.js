@@ -27,6 +27,34 @@ function returnToProfile(pluginUUID, device) {
     }
 }
 
+function setImage(context, imageName) {
+
+    //convert to base64img
+    var canvas = document.createElement('CANVAS');
+    var ctx = canvas.getContext('2d');
+    var img = new Image;
+    img.crossOrigin = 'Anonymous';
+    img.onload = function () {
+        canvas.height = img.height;
+        canvas.width = img.width;
+        //ctx.rotate(vRotate*Math.PI/180);
+        ctx.drawImage(img, vPosX, vPosY);
+        var dataURL = canvas.toDataURL(outputFormat || 'image/png');
+
+        var json = {
+            'event': 'setImage',
+            'context': context,
+            'payload': {
+                'image': dataURL,
+                'target': 0
+            }
+        };
+        websocket.send(JSON.stringify(json));
+    };
+
+    img.src = imageName;
+}
+
 function loadProfile(pluginUUID, device, profile) {
     if (websocket) {
         var json = {

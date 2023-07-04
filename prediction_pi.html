@@ -34,6 +34,11 @@
                     <button onclick="loadAuthWindow()" class="sdpi-item-value"
                         id="get_access_token_button">Get Started</button>
                 </div>
+                <div class="sdpi-item" id="alt_link_content" style="display: none;">
+                    <div class="sdpi-item-label" id="check_auth_heading">Invalid Browser? Click to copy a link for an external browser</div>
+                    <button onclick="copyLinkToClipboard()" class="sdpi-item-value"
+                        id="get_access_token_button">Copy link to clipboard</button>
+                </div>
                 <div class="sdpi-item">
                     <div class="sdpi-item-label"  id="check_auth_heading">Issues?</div>
                     <button onclick="checkAuth()" class="sdpi-item-value" id="check_auth_button">Check Auth</button>

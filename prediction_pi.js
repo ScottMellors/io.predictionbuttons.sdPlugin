@@ -35,10 +35,29 @@ function generateString(length = 8) {
 
 let authCheckTimer;
 let authCheckStartTime;
+let link;
+
+function copyLinkToClipboard() {
+    if(link) {
+        authCheckStartTime.setMinutes(authCheckStartTime.getMinutes() + 5); //reset timer
+
+        //copy to clipboard
+        navigator.clipboard.writeText(link);
+    }
+}
+
+function showHideClipboardLink(visibility) {
+    document.getElementById('alt_link_content').style.display = visibility
+}
 
 function loadAuthWindow() {
     state = getOrGenState();
-    window.open(`https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=dx2y2z4epfd3ycn9oho1dnucnd7ou5&redirect_uri=${server}/streamdeck-auth-complete&scope=channel:manage:predictions&state=${state}`, "_blank");
+    link = `https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=dx2y2z4epfd3ycn9oho1dnucnd7ou5&redirect_uri=${server}/streamdeck-auth-complete&scope=channel:manage:predictions&state=${state}`;
+
+    window.open(link, "_blank");
+
+    //show extra link button
+    showHideClipboardLink('flex');
 
     //start listening
     if (!authCheckTimer) {
@@ -47,6 +66,9 @@ function loadAuthWindow() {
 
         authCheckTimer = setInterval(() => {
             if (Date.now() > authCheckStartTime) {
+                //hide extra link button
+                showHideClipboardLink('none');
+
                 clearInterval(authCheckTimer);
                 return;
             }
@@ -57,6 +79,9 @@ function loadAuthWindow() {
                 //if not undefined, store keys, cancel timer
                 if (response.status == 200) {
                     if (!body.accessToken || !body.refreshToken) {
+                        //hide extra link button
+                        showHideClipboardLink('none');
+
                         clearInterval(authCheckTimer);
                         return;
                     }
@@ -91,6 +116,8 @@ function loadAuthWindow() {
                 }
             }).catch(e => {
                 logToFile(pluginUUID, e);
+
+                showHideClipboardLink('none');
                 clearInterval(authCheckTimer);
 
                 state = undefined;

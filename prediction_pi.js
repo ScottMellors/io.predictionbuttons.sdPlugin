@@ -9,7 +9,7 @@ let activeOutcomes = undefined;
 
 let state;
 
-let server = "https://pdauth.ghostlytuna.co.uk";
+let server = "https://pbauth.ghostlytuna.co.uk";
 
 function getOrGenState() {
 

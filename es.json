@@ -40,7 +40,6 @@
             "TwitchAuthDesc1": "We require you to auth with one of my other tools to allow creation and management of predictions.",
             "TwitchAuthDesc2": "Once authorized, copy your access token into the field below.",
             "TwitchAuthDesc3": "This token may expire, you will need to reauthorize and reapply the code.",
-            "TwitchAuthDesc4": "Having capcha window issues? Try here in an external browser - https://streamtimer.io/streamdeck-auth",
             "GetAccessTokenCTA": "Get AccessToken",
             "AccessToken": "Access Token",
             "CheckAuth": "Check Auth",

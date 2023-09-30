@@ -9,7 +9,7 @@ let activeOutcomes = undefined;
 
 let state;
 
-let server = "https://streamtimer.io";
+let server = "https://pdauth.ghostlytuna.co.uk";
 
 function getOrGenState() {
 

@@ -9,7 +9,7 @@ let activeOutcomes = undefined;
 
 let state;
 
-let server = "https://channel-points-tool.com";
+let server = "https://streamtimer.io";
 
 function getOrGenState() {
 

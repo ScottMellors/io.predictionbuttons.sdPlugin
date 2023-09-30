@@ -1,5 +1,5 @@
 async function refreshAccessToken(refreshToken) {
-    return await fetch(`https://channel-points-tool.com/streamdeck-auth-refresh/${refreshToken}`,).then(async (response) => {
+    return await fetch(`https://streamtimer.io/streamdeck-auth-refresh/${refreshToken}`,).then(async (response) => {
         switch (response.status) {
             case 200:
                 return response.json();

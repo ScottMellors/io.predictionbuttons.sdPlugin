@@ -10,7 +10,7 @@ async function refreshAccessToken(refreshToken) {
         }
 
     }).then(json => {
-        return json.accessToken;
+        return json;
     }).catch((exc) => {
         logToFile(pluginUUID, exc);
         return undefined;

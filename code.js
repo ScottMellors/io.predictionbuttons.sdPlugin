@@ -87,12 +87,13 @@ function createPrediction(context, settings, deviceId, outcomesObj) {
 async function refreshToken() {
     let authd = false;
     if (globalSettings.broadcasterRefreshToken) {
-        let newAccessToken = await refreshAccessToken(globalSettings.broadcasterRefreshToken);
-        console.log("Refreshing token");
+        let tokens = await refreshAccessToken(globalSettings.broadcasterRefreshToken);
+        logToFile("Refreshing token");
 
-        if (newAccessToken) {
-            console.log("got new access token");
-            globalSettings.broadcasterAccessToken = newAccessToken;
+        if (tokens.accessToken) {
+            logToFile("got new tokens");
+            globalSettings.broadcasterAccessToken = tokens.accessToken;
+            globalSettings.broadcasterRefreshToken = tokens.refreshToken;
             saveGlobalSettings(pluginUUID);
             authd = true;
         } else {

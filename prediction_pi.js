@@ -138,7 +138,7 @@ function checkAuth() {
             }
         }).then((response) => {
             if (!response.ok) {
-                logToFile(pluginUUID, "Checkauth() - Did not auth - bad response");
+                logToFile(pluginUUID, `Checkauth() - Did not auth - ${response.status + " " + response.statusText}`);
 
                 throw new Error('DidNotAuth');
             } else {
@@ -252,10 +252,11 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
 
 async function refreshTokenPI() {
     if (globalSettings.broadcasterRefreshToken) {
-        let newAccessToken = await refreshAccessToken(globalSettings.broadcasterRefreshToken);
+        let tokens = await refreshAccessToken(globalSettings.broadcasterRefreshToken);
 
         if (newAccessToken) {
-            globalSettings.broadcasterAccessToken = newAccessToken;
+            globalSettings.broadcasterAccessToken = tokens.accessToken;
+            globalSettings.broadcasterRefreshToken = tokens.refreshToken;
             saveGlobalSettings(pluginUUID);
         } else {
             logToFile(pluginUUID, "broadcasterRefreshToken refresh failed");

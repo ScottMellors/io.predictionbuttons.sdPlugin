@@ -9,7 +9,7 @@ let activeOutcomes = undefined;
 
 let state;
 
-let server = "https://streamtimer.io";
+let server = "http://localhost:3000"/*"https://streamtimer.io"*/;
 
 function getOrGenState() {
 
@@ -88,6 +88,12 @@ function loadAuthWindow() {
 
                     globalSettings.broadcasterAccessToken = body.accessToken;
                     globalSettings.broadcasterRefreshToken = body.refreshToken;
+                    if(body.expires_in != null) {
+                        globalSettings.expires_in = new Date(Date.now() + body.expires_in).toISOString();
+                    }
+                    globalSettings.timeChanged = new Date(Date.now()).toISOString();
+
+                    saveGlobalSettings(pluginUUID);
 
                     fetch("https://id.twitch.tv/oauth2/validate", {
                         headers: {
@@ -97,25 +103,24 @@ function loadAuthWindow() {
                         }
                     }).then((response) => {
                         if (!response.ok) {
-                            logToFile(pluginUUID, "validate - Did not auth - bad response");
+                            logToFile("validate - Did not auth - bad response");
                         } else {
                             response.json().then((body) => {
+                                logToFile("validated - Did auth - " + body.user_id);
                                 globalSettings.broadcasterId = body.user_id;
                                 saveGlobalSettings(pluginUUID);
                             });
                         }
                     }).catch((error) => {
-                        logToFile(pluginUUID, "Did not auth - " + error);
+                        logToFile("Did not auth - " + error);
                     });
-
-                    saveGlobalSettings(pluginUUID);
 
                     clearInterval(authCheckTimer);
 
                     state = undefined;
                 }
             }).catch(e => {
-                logToFile(pluginUUID, e);
+                logToFile(e);
 
                 showHideClipboardLink('none');
                 clearInterval(authCheckTimer);
@@ -138,7 +143,7 @@ function checkAuth() {
             }
         }).then((response) => {
             if (!response.ok) {
-                logToFile(pluginUUID, `Checkauth() - Did not auth - ${response.status + " " + response.statusText}`);
+                logToFile(`Checkauth() - Did not auth - ${response.status + " " + response.statusText}`);
 
                 throw new Error('DidNotAuth');
             } else {
@@ -149,7 +154,7 @@ function checkAuth() {
                 });
             }
         }).catch((error) => {
-            logToFile(pluginUUID, "Did not auth");
+            logToFile("Did not auth");
             sendValueToPlugin("showError", "");
 
             //show error dialog
@@ -157,7 +162,7 @@ function checkAuth() {
             errorWindow.document.write(`<span style="color: #FFFFFF;">Oh no. The provided access token didn't authenticate for some reason.  <br /><br /> REASON: ${error}  <br /><br />If you require help, check over at the <a style="color: #FFFFFF;" href="https://discordapp.com/invite/S67P7UH" target="_blank">GhostlyTuna discord</a> for assistance!</span>`);
         });
     } else {
-        logToFile(pluginUUID, "Did not auth - no broadcasterAccessToken");
+        logToFile("Did not auth - no broadcasterAccessToken");
         sendValueToPlugin("showError", "");
 
         //show error dialog
@@ -255,14 +260,15 @@ async function refreshTokenPI() {
         let tokens = await refreshAccessToken(globalSettings.broadcasterRefreshToken);
 
         if (newAccessToken) {
+            logToFile("broadcasterRefreshToken refresh success");
             globalSettings.broadcasterAccessToken = tokens.accessToken;
             globalSettings.broadcasterRefreshToken = tokens.refreshToken;
             saveGlobalSettings(pluginUUID);
         } else {
-            logToFile(pluginUUID, "broadcasterRefreshToken refresh failed");
+            logToFile("broadcasterRefreshToken refresh failed");
         }
     } else {
-        logToFile(pluginUUID, "broadcasterRefreshToken not found");
+        logToFile("broadcasterRefreshToken not found");
     }
 }
 
@@ -364,8 +370,6 @@ function sendValueToPlugin(type, value) {
             payload["outcomes"] = activeOutcomes;
             payload["duration"] = document.getElementById("prediction_duration").value;
             payload["profileSwap"] = document.getElementById("profileSwap").checked;
-        } else if (type == "authUpdate") {
-            payload = value;
         } else if (type == "outcomeUpdate") {
             //get value from field
             payload["outcomeValue"] = document.getElementById("outcome_select").value;

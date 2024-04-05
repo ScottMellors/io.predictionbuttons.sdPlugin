@@ -181,7 +181,7 @@ function setOutcomeState(context, stateNum) {
     websocket.send(JSON.stringify(json));
 }
 
-function logToFile(context, message) {
+function logToFile(message) {
 
     if (DEBUG) {
         console.log(message);
@@ -190,7 +190,6 @@ function logToFile(context, message) {
     if (context) {
         var json = {
             "event": "logMessage",
-            "context": context,
             "payload": {
                 "message": message
             }

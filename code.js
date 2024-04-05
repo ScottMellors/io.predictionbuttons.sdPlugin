@@ -23,7 +23,7 @@ function loadCorrectProfile(context, device) {
             loadProfile(context, device, "PredictionUi");
             break;
         default:
-            logToFile(pluginUUID, "Device type not found! - " + device.type);
+            logToFile("Device type not found! - " + device.type);
             break;
     }
 }
@@ -80,7 +80,7 @@ function createPrediction(context, settings, deviceId, outcomesObj) {
         }
     }).catch((reason) => {
         showError(context);
-        logToFile(pluginUUID, reason);
+        logToFile(reason);
     });
 }
 
@@ -97,11 +97,11 @@ async function refreshToken() {
             saveGlobalSettings(pluginUUID);
             authd = true;
         } else {
-            logToFile(pluginUUID, "broadcasterRefreshToken refresh failed");
+            logToFile("broadcasterRefreshToken refresh failed");
             authd = false;
         }
     } else {
-        logToFile(pluginUUID, "broadcasterRefreshToken not found");
+        logToFile("broadcasterRefreshToken not found");
         authd = false;
     }
 
@@ -196,6 +196,7 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
                 showError();
             }
         } else if (event == "didReceiveGlobalSettings") {
+            logToFile("didReceiveGlobalSettings");
             gotGlobalSettings = true;
             globalSettings = jsonPayload.settings;
         }
@@ -215,6 +216,7 @@ var startAction = {
         if (currentlyBusy == true) {
             return;
         } else if (gotGlobalSettings) {
+            logToFile("202 - Not busy, got globals");
             if (recentlyAuthorised == true) {
                 fireOffPrediction(context, settings, deviceId);
             } else {
@@ -234,6 +236,8 @@ var startAction = {
                         if (!response.ok) {
                             //Do reauth flow iwht refresh token
                             if (globalSettings.broadcasterRefreshToken) {
+                                logToFile("213 - " + response.status + " " + response.statusText);
+
                                 let success = await refreshToken();
                                 updateStartButton(context, false);
                                 if (success == true) {
@@ -248,7 +252,7 @@ var startAction = {
                                 updateStartButton(context, false);
 
                                 //show error
-                                logToFile(pluginUUID, "234 - " + response.status + " " + response.statusText);
+                                logToFile("234 - " + response.status + " " + response.statusText);
                                 setAuthState(context, false);
                             }
                         } else {
@@ -260,7 +264,7 @@ var startAction = {
                         }
                     }).catch((error) => {
                         updateStartButton(context, false);
-                        logToFile(pluginUUID, "286 - " + error);
+                        logToFile("286 - " + error);
                         setAuthState(context, false);
                     });
                 }
@@ -286,7 +290,7 @@ function updateStartButton(context, busyUpdate) {
     } else if (busyUpdate == false) {
         setImage(context, "art/predictionicons_wait.png");
     } else {
-        console.log("busyUpdate not booly - " + busyUpdate);
+        logToFile("busyUpdate not booly - " + busyUpdate);
     }
 }
 
@@ -301,7 +305,7 @@ function fireOffPrediction(context, settings, deviceId) {
         }
     }).then(response => {
         if (!response.ok) {
-            logToFile(pluginUUID, response.status);
+            logToFile(response.status);
             throw new Error(response.status);
         } else {
             response.json().then((body) => {
@@ -371,7 +375,7 @@ var outcomeCustomAction = {
                 }
             }
             ).catch((error) => {
-                logToFile(pluginUUID, error);
+                logToFile(error);
                 showError(context);
             });
         }
@@ -423,7 +427,7 @@ var outcome1Action = {
             }
         }
         ).catch((error) => {
-            logToFile(pluginUUID, error);
+            logToFile(error);
             showError(context);
         });
     },
@@ -472,7 +476,7 @@ var outcome2Action = {
             }
         }
         ).catch((error) => {
-            logToFile(pluginUUID, error);
+            logToFile(error);
             showError(context);
         });
     },
@@ -520,7 +524,7 @@ let outcomeAction = {
                 }
             }
             ).catch((error) => {
-                logToFile(pluginUUID, error);
+                logToFile(error);
                 showError(context);
             });
         }
@@ -602,7 +606,7 @@ var cancelAction = {
             }
         }
         ).catch((error) => {
-            logToFile(pluginUUID, error);
+            logToFile(error);
             showError(context);
         });
     }
@@ -642,7 +646,7 @@ var lockAction = {
                 }
             }
             ).catch((error) => {
-                logToFile(pluginUUID, error);
+                logToFile(error);
                 showError(context);
             });
         } else {

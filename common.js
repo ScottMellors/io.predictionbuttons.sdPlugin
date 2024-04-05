@@ -12,7 +12,7 @@ async function refreshAccessToken(refreshToken) {
     }).then(json => {
         return json;
     }).catch((exc) => {
-        logToFile(pluginUUID, exc);
+        logToFile(exc);
         return undefined;
     });
 }

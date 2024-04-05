@@ -91,7 +91,7 @@ function loadAuthWindow() {
                     if(body.expires_in != null) {
                         globalSettings.expires_in = new Date(Date.now() + body.expires_in).toISOString();
                     }
-                    globalSettings.timeChanged = new Date(Date.now()).toISOString();
+                    globalSettings.lastUpdated = new Date(Date.now()).toISOString();
 
                     saveGlobalSettings(pluginUUID);
 

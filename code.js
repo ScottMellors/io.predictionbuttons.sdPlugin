@@ -295,6 +295,8 @@ function updateStartButton(context, busyUpdate) {
 }
 
 function fireOffPrediction(context, settings, deviceId) {
+    logToFile("111 " + globalSettings.expires_in + " " + globalSettings.lastUpdated + " " + globalSettings.broadcasterId);
+
     fetch("https://api.twitch.tv/helix/predictions?" + new URLSearchParams({
         "broadcaster_id": globalSettings.broadcasterId,
     }), {

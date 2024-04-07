@@ -38,7 +38,7 @@ let authCheckStartTime;
 let link;
 
 function copyLinkToClipboard() {
-    if(link) {
+    if (link) {
         authCheckStartTime.setMinutes(authCheckStartTime.getMinutes() + 5); //reset timer
 
         //copy to clipboard
@@ -88,7 +88,7 @@ function loadAuthWindow() {
 
                     globalSettings.broadcasterAccessToken = body.accessToken;
                     globalSettings.broadcasterRefreshToken = body.refreshToken;
-                    if(body.expires_in != null) {
+                    if (body.expires_in != null) {
                         globalSettings.expires_in = new Date(Date.now() + body.expires_in).toISOString();
                     }
                     globalSettings.lastUpdated = new Date(Date.now()).toISOString();
@@ -259,16 +259,16 @@ async function refreshTokenPI() {
     if (globalSettings.broadcasterRefreshToken) {
         let tokens = await refreshAccessToken(globalSettings.broadcasterRefreshToken);
 
-        if (newAccessToken) {
-            logToFile("broadcasterRefreshToken refresh success");
+        if (tokens.accessToken && tokens.refreshToken) {
+            logToFile("refreshTokenPI - broadcasterRefreshToken refresh success");
             globalSettings.broadcasterAccessToken = tokens.accessToken;
             globalSettings.broadcasterRefreshToken = tokens.refreshToken;
             saveGlobalSettings(pluginUUID);
         } else {
-            logToFile("broadcasterRefreshToken refresh failed");
+            logToFile("refreshTokenPI - broadcasterRefreshToken refresh failed");
         }
     } else {
-        logToFile("broadcasterRefreshToken not found");
+        logToFile("refreshTokenPI - broadcasterRefreshToken not found");
     }
 }
 

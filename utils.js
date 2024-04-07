@@ -187,16 +187,14 @@ function logToFile(message) {
         console.log(message);
     }
 
-    if (context) {
-        var json = {
-            "event": "logMessage",
-            "payload": {
-                "message": message
-            }
-        };
+    var json = {
+        "event": "logMessage",
+        "payload": {
+            "message": message
+        }
+    };
 
-        websocket.send(JSON.stringify(json));
-    }
+    websocket.send(JSON.stringify(json));
 }
 
 function setLockState(context, lockState) {

@@ -87,17 +87,22 @@ function createPrediction(context, settings, deviceId, outcomesObj) {
 async function refreshToken() {
     let authd = false;
     if (globalSettings.broadcasterRefreshToken) {
-        let tokens = await refreshAccessToken(globalSettings.broadcasterRefreshToken);
         logToFile("Refreshing token");
+        let tokens = await refreshAccessToken(globalSettings.broadcasterRefreshToken);
 
-        if (tokens.accessToken) {
+        if (tokens.accessToken && tokens.refreshToken) {
             logToFile("got new tokens");
             globalSettings.broadcasterAccessToken = tokens.accessToken;
             globalSettings.broadcasterRefreshToken = tokens.refreshToken;
+            if (body.expires_in != null) {
+                globalSettings.expires_in = new Date(Date.now() + body.expires_in).toISOString();
+            }
+            globalSettings.lastUpdated = new Date(Date.now()).toISOString();
+            
             saveGlobalSettings(pluginUUID);
             authd = true;
         } else {
-            logToFile("broadcasterRefreshToken refresh failed");
+            logToFile("broadcasterRefreshToken refresh failed - missing values");
             authd = false;
         }
     } else {
@@ -307,7 +312,7 @@ function fireOffPrediction(context, settings, deviceId) {
         }
     }).then(response => {
         if (!response.ok) {
-            logToFile(response.status);
+            logToFile("315 - " + response.status);
             throw new Error(response.status);
         } else {
             response.json().then((body) => {
@@ -340,6 +345,7 @@ function fireOffPrediction(context, settings, deviceId) {
             });
         }
     }).catch((e) => {
+        logToFile(e);
         showError(context);
     });
 }

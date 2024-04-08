@@ -1,4 +1,7 @@
 async function refreshAccessToken(refreshToken) {
+
+    logToFile("Refreshing with " + refreshToken);
+
     return await fetch(`https://streamtimer.io/streamdeck-auth-refresh/${refreshToken}`,).then(async (response) => {
         switch (response.status) {
             case 200:

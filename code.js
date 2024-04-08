@@ -87,7 +87,7 @@ function createPrediction(context, settings, deviceId, outcomesObj) {
 async function refreshToken() {
     let authd = false;
     if (globalSettings.broadcasterRefreshToken) {
-        logToFile("Refreshing token");
+        logToFile("Refreshing token with " + globalSettings.broadcasterRefreshToken + " " + globalSettings.lastUpdated);
         let tokens = await refreshAccessToken(globalSettings.broadcasterRefreshToken);
 
         if (tokens.accessToken && tokens.refreshToken) {
@@ -98,7 +98,7 @@ async function refreshToken() {
                 globalSettings.expires_in = new Date(Date.now() + body.expires_in).toISOString();
             }
             globalSettings.lastUpdated = new Date(Date.now()).toISOString();
-            
+
             saveGlobalSettings(pluginUUID);
             authd = true;
         } else {

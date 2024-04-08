@@ -257,15 +257,19 @@ function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, 
 
 async function refreshTokenPI() {
     if (globalSettings.broadcasterRefreshToken) {
+
+        logToFile("refreshTokenPI - refreshing token " + globalSettings.broadcasterRefreshToken + " " + globalSettings.lastUpdated);
+
         let tokens = await refreshAccessToken(globalSettings.broadcasterRefreshToken);
 
         if (tokens.accessToken && tokens.refreshToken) {
             logToFile("refreshTokenPI - broadcasterRefreshToken refresh success");
             globalSettings.broadcasterAccessToken = tokens.accessToken;
             globalSettings.broadcasterRefreshToken = tokens.refreshToken;
+            globalSettings.lastUpdated = new Date(Date.now()).toISOString();
             saveGlobalSettings(pluginUUID);
         } else {
-            logToFile("refreshTokenPI - broadcasterRefreshToken refresh failed");
+            logToFile("refreshTokenPI - broadcasterRefreshToken refresh failed - " + tokens.accessToken + " / " + tokens.refreshToken);
         }
     } else {
         logToFile("refreshTokenPI - broadcasterRefreshToken not found");

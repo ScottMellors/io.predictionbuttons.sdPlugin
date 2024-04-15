@@ -9,7 +9,7 @@ let activeOutcomes = undefined;
 
 let state;
 
-let server = "http://localhost:3000"/*"https://streamtimer.io"*/;
+let server = "https://streamtimer.io";
 
 function getOrGenState() {
 

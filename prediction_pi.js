@@ -78,7 +78,7 @@ function loadAuthWindow() {
 
                 //if not undefined, store keys, cancel timer
                 if (response.status == 200) {
-                    if (!body.accessToken || !body.refreshToken) {
+                    if (!body.accessToken || !body.refreshToken || !body.expires_in) {
                         //hide extra link button
                         showHideClipboardLink('none');
 
@@ -88,9 +88,7 @@ function loadAuthWindow() {
 
                     globalSettings.broadcasterAccessToken = body.accessToken;
                     globalSettings.broadcasterRefreshToken = body.refreshToken;
-                    if (body.expires_in != null) {
-                        globalSettings.expires_in = new Date(Date.now() + body.expires_in).toISOString();
-                    }
+                    globalSettings.expires_in = new Date(Date.now() + body.expires_in).toISOString();
                     globalSettings.lastUpdated = new Date(Date.now()).toISOString();
 
                     saveGlobalSettings(pluginUUID);
@@ -154,7 +152,7 @@ function checkAuth() {
                 });
             }
         }).catch((error) => {
-            logToFile("Did not auth");
+            logToFile("Checkauth() - Did not auth");
             sendValueToPlugin("showError", "");
 
             //show error dialog
@@ -262,14 +260,18 @@ async function refreshTokenPI() {
 
         let tokens = await refreshAccessToken(globalSettings.broadcasterRefreshToken);
 
-        if (tokens.accessToken && tokens.refreshToken) {
+        if (tokens.accessToken && tokens.refreshToken && tokens.expires_in) {
             logToFile("refreshTokenPI - broadcasterRefreshToken refresh success");
             globalSettings.broadcasterAccessToken = tokens.accessToken;
             globalSettings.broadcasterRefreshToken = tokens.refreshToken;
+            globalSettings.expires_in = new Date(Date.now() + tokens.expires_in).toISOString();
             globalSettings.lastUpdated = new Date(Date.now()).toISOString();
+
+            logToFile("256 - " + globalSettings.expires_in);
+
             saveGlobalSettings(pluginUUID);
         } else {
-            logToFile("refreshTokenPI - broadcasterRefreshToken refresh failed - " + tokens.accessToken + " / " + tokens.refreshToken);
+            logToFile("refreshTokenPI - broadcasterRefreshToken refresh failed - " + tokens.accessToken + " / " + tokens.refreshToken + " / " + tokens.expires_in);
         }
     } else {
         logToFile("refreshTokenPI - broadcasterRefreshToken not found");

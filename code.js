@@ -3,7 +3,6 @@ var globalSettings = {};
 var websocket = null;
 var pluginUUID = null;
 var gotGlobalSettings = false;
-var recentlyAuthorised = false;
 var devices;
 
 let currentlyBusy = false;
@@ -90,17 +89,16 @@ async function refreshToken() {
         logToFile("Refreshing token with " + globalSettings.broadcasterRefreshToken + " " + globalSettings.lastUpdated);
         let tokens = await refreshAccessToken(globalSettings.broadcasterRefreshToken);
 
-        if (tokens.accessToken && tokens.refreshToken) {
+        if (tokens.accessToken && tokens.refreshToken && tokens.expires_in) {
+            authd = true;
+
             logToFile("got new tokens");
             globalSettings.broadcasterAccessToken = tokens.accessToken;
             globalSettings.broadcasterRefreshToken = tokens.refreshToken;
-            if (body.expires_in != null) {
-                globalSettings.expires_in = new Date(Date.now() + body.expires_in).toISOString();
-            }
+            globalSettings.expires_in = new Date(Date.now() + tokens.expires_in).toISOString();
             globalSettings.lastUpdated = new Date(Date.now()).toISOString();
 
             saveGlobalSettings(pluginUUID);
-            authd = true;
         } else {
             logToFile("broadcasterRefreshToken refresh failed - missing values");
             authd = false;
@@ -212,6 +210,21 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
     };
 };
 
+function recentlyAuthorised() {
+    if (globalSettings.expires_in == null) {
+        return false;
+    }
+
+    let expiryDate = new Date(globalSettings.expires_in);
+    let now = new Date();
+
+    if (expiryDate.getTime() < now.getTime()) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 //Actions
 var startAction = {
     type: "io.predictionbuttons.start",
@@ -219,12 +232,15 @@ var startAction = {
     onKeyDown: function (context, settings, coordinates, userDesiredState, deviceId) {
 
         if (currentlyBusy == true) {
+            logToFile("203 - Currently Busy");
             return;
         } else if (gotGlobalSettings) {
             logToFile("202 - Not busy, got globals");
-            if (recentlyAuthorised == true) {
+            if (recentlyAuthorised() == true) {
+                logToFile("211 - recently Auth'd");
                 fireOffPrediction(context, settings, deviceId);
             } else {
+                logToFile("218 - not recently Auth'd");
                 if (!globalSettings.broadcasterAccessToken) {
                     setAuthState(context, false);
                 } else {
@@ -264,7 +280,6 @@ var startAction = {
                             updateStartButton(context, false);
 
                             setAuthState(context, true);
-                            recentlyAuthorised = true;
                             fireOffPrediction(context, settings, deviceId);
                         }
                     }).catch((error) => {
@@ -275,6 +290,7 @@ var startAction = {
                 }
             }
         } else {
+            logToFile("299 - Something terrible has happened.");
             setAuthState(context, true);
         }
     },

@@ -278,41 +278,73 @@ async function refreshTokenPI() {
     }
 }
 
+function updateOutcomes() {
+    //send sendValueToPlugin with predictionUpdate
+    sendValueToPlugin("predictionUpdate", '');
+}
+
 function addOutcome(pos) {
     //get current outcomes length
     if (activeOutcomes.length <= 10) {
-
-        let newWidget = document.createElement("div");
-        newWidget.classList.add("sdpi-item");
-
         //localise widget
         if (pos == undefined) {
             activeOutcomes.push(boilerplateOutcomes[activeOutcomes.length]);
+            pos = activeOutcomes.length;
         }
+
+        let newWidget = document.createElement("div");
+        newWidget.classList.add("sdpi-item");
+        newWidget.id = `outcome_div_${pos}`;
+
+        let deleteButton = document.createElement("button");
+        deleteButton.classList.add("sdpi-item-value");
+        deleteButton.style.color = "#ff0000";
+        deleteButton.innerHTML = "X";
+        deleteButton.onclick = function () {
+            //TODO get confirmation
+
+            //delete entry and redraw
+            let outcomeRow = document.getElementById(`outcome_div_${pos}`);
+            outcomeRow.innerHTML = "";
+
+            //If it exists in active outcomes, delete it
+            if (pos - 1 < activeOutcomes.length) {
+                //delete entry
+                activeOutcomes.splice(pos - 1, 1);
+            }
+
+            //redraw
+            document.getElementById("moreOutcomesDiv").innerHTML = "";
+
+            for (let i = 1; i <= activeOutcomes.length; i++) {
+                let outcome = activeOutcomes[i - 1];
+
+                //if > 2, build widget, insert data
+                if (i > 2) {
+                    addOutcome(i);
+                    document.getElementById(`prediction_outcome_${i}`).value = outcome;
+                } else {
+                    document.getElementById(`prediction_outcome_${i}`).value = outcome;
+                }
+            }
+        };
 
         let outcomeInput = document.createElement("input");
         outcomeInput.classList.add("sdpi-item-value");
-        outcomeInput.id = `prediction_outcome_${pos || activeOutcomes.length - 1}`;
+        outcomeInput.id = `prediction_outcome_${pos}`;
         outcomeInput.setAttribute("type", "text");
-        outcomeInput.addEventListener('change', function () {
-            sendValueToPlugin('predictionUpdate', pos || activeOutcomes.length);
-        }, false);
-        outcomeInput.setAttribute("value", activeOutcomes[pos || activeOutcomes.length - 1]);
+        outcomeInput.setAttribute("value", activeOutcomes[pos - 1]);
 
         let outcomeLabel = document.createElement("div");
         outcomeLabel.classList.add("sdpi-item-label");
-        outcomeLabel.innerHTML = "Prediction Outcome " + (pos || activeOutcomes.length);
+        outcomeLabel.innerHTML = "Prediction Outcome " + (pos);
 
         newWidget.appendChild(outcomeLabel);
         newWidget.appendChild(outcomeInput);
+        newWidget.appendChild(deleteButton);
 
         let outcomesDiv = document.getElementById("moreOutcomesDiv");
         outcomesDiv.appendChild(newWidget);
-
-        //ensure values are updated
-        if (!pos) {
-            sendValueToPlugin('predictionUpdate', '');
-        }
 
         if (activeOutcomes.length == 10) {
             //disable button
@@ -337,20 +369,16 @@ function sendValueToPlugin(type, value) {
         let payload = {};
 
         //Need to do a sanity check on outcomes, delete any elements are length 0
-
         if (type == "predictionUpdate") {
-
-            if (typeof value == 'number') {
-                //update positing with contents
-
+            //update positing with contents
+            for (let value = 1; value <= activeOutcomes.length; value++) {
                 let updatedValue = document.getElementById(`prediction_outcome_${value}`)?.value.trim() || "";
 
-                if (updatedValue == "") {
+                console.log(updatedValue);
 
-                    if (activeOutcomes.length > 2) {
-                        //empty extra outcomes
-                        document.getElementById("moreOutcomesDiv").innerHTML = "";
-                    }
+                if (updatedValue == "") {
+                    //empty extra outcomes
+                    document.getElementById("moreOutcomesDiv").innerHTML = "";
 
                     //delete pos
                     activeOutcomes.splice(value - 1, 1);
@@ -364,18 +392,18 @@ function sendValueToPlugin(type, value) {
                             document.getElementById(`prediction_outcome_${i}`).value = outcome || boilerplateOutcomes[i - 1];
                         }
                     }
-
                 } else {
                     //update
                     activeOutcomes[value - 1] = document.getElementById(`prediction_outcome_${value}`).value;
-                }
 
+                    console.log(activeOutcomes);
+                }
             }
 
             payload["predictionTitle"] = document.getElementById("prediction_title").value;
-            payload["outcomes"] = activeOutcomes;
             payload["duration"] = document.getElementById("prediction_duration").value;
             payload["profileSwap"] = document.getElementById("profileSwap").checked;
+            payload["outcomes"] = activeOutcomes;
         } else if (type == "outcomeUpdate") {
             //get value from field
             payload["outcomeValue"] = document.getElementById("outcome_select").value;

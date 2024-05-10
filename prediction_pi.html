@@ -31,21 +31,23 @@
                     but you may still need to reauthorize if that fails.</p>
                 <div class="sdpi-item">
                     <div class="sdpi-item-label" id="check_auth_heading">Authorise</div>
-                    <button onclick="loadAuthWindow()" class="sdpi-item-value"
-                        id="get_access_token_button">Get Started</button>
+                    <button onclick="loadAuthWindow()" class="sdpi-item-value" id="get_access_token_button">Get
+                        Started</button>
                 </div>
                 <div class="sdpi-item" id="alt_link_content" style="display: none;">
-                    <div class="sdpi-item-label" id="check_auth_heading">Invalid Browser? Click to copy a link for an external browser</div>
-                    <button onclick="copyLinkToClipboard()" class="sdpi-item-value"
-                        id="get_access_token_button">Copy link to clipboard</button>
+                    <div class="sdpi-item-label" id="check_auth_heading">Invalid Browser? Click to copy a link for an
+                        external browser</div>
+                    <button onclick="copyLinkToClipboard()" class="sdpi-item-value" id="get_access_token_button">Copy
+                        link to clipboard</button>
                 </div>
                 <div class="sdpi-item">
-                    <div class="sdpi-item-label"  id="check_auth_heading">Issues?</div>
+                    <div class="sdpi-item-label" id="check_auth_heading">Issues?</div>
                     <button onclick="checkAuth()" class="sdpi-item-value" id="check_auth_button">Check Auth</button>
                 </div>
                 <div class="sdpi-item">
                     <div class="sdpi-item-label">Manual Refresh</div>
-                    <button onclick="refreshTokenPI()" class="sdpi-item-value" id="toggle_auth_button">Refresh Token</button>
+                    <button onclick="refreshTokenPI()" class="sdpi-item-value" id="toggle_auth_button">Refresh
+                        Token</button>
                 </div>
             </details>
         </div>
@@ -57,19 +59,17 @@
         </div>
         <div class="sdpi-item start">
             <div class="sdpi-item-label" id="prediction_outcome_1_title">Prediction Outcome 1</div>
-            <input class="sdpi-item-value" id="prediction_outcome_1" type="text" value="YES"
-                onchange="sendValueToPlugin('predictionUpdate',1)">
+            <input class="sdpi-item-value" id="prediction_outcome_1" type="text" value="YES">
         </div>
         <div class="sdpi-item start">
             <div class="sdpi-item-label" id="prediction_outcome_2_title">Prediction Outcome 2</div>
-            <input class="sdpi-item-value" id="prediction_outcome_2" type="text" value="NO"
-                onchange="sendValueToPlugin('predictionUpdate',2)">
+            <input class="sdpi-item-value" id="prediction_outcome_2" type="text" value="NO">
         </div>
         <div id="moreOutcomesDiv"></div>
         <div class="sdpi-item start">
-            <div class="sdpi-item-label" id="extra_outcomes_title">Extra Outcomes</div>
-            <button class="sdpi-item-value" id="addOutcomesButton" onclick="addOutcome()">Add more outcomes (max
-                10)</button>
+            <div class="sdpi-item-label" id="extra_outcomes_title">Outcome Tools</div>
+            <button class="sdpi-item-value" id="addOutcomesButton" onclick="addOutcome()"> Add </button>
+            <button onclick="updateOutcomes()" class="sdpi-item-value" id="update_outcomes_button">Save</button>
         </div>
         <div class="sdpi-item start">
             <div class="sdpi-item-label" id="prediction_duration_title">Prediction Duration (Seconds)</div>

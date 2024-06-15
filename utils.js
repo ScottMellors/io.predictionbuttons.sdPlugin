@@ -11,6 +11,8 @@ function saveGlobalSettings(context) {
             'payload': globalSettings
         };
         websocket.send(JSON.stringify(json));
+    } else {
+        logToFile("147 - websocket not found");
     }
 }
 
@@ -24,6 +26,8 @@ function returnToProfile(pluginUUID, device) {
         };
 
         websocket.send(JSON.stringify(json));
+    }else {
+        logToFile("146 - websocket not found");
     }
 }
 

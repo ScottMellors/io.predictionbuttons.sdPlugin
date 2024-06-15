@@ -92,10 +92,10 @@ async function refreshToken() {
         if (tokens.accessToken && tokens.refreshToken && tokens.expires_in) {
             authd = true;
 
-            logToFile("got new tokens");
+            logToFile("got new tokens - " + tokens.accessToken + " - " + tokens.refreshToken + " - " + tokens.expires_in);
             globalSettings.broadcasterAccessToken = tokens.accessToken;
             globalSettings.broadcasterRefreshToken = tokens.refreshToken;
-            globalSettings.expires_in = new Date(Date.now() + tokens.expires_in).toISOString();
+            globalSettings.expires_in = new Date(Date.now() + (tokens.expires_in * 1000)).toISOString();
             globalSettings.lastUpdated = new Date(Date.now()).toISOString();
 
             saveGlobalSettings(pluginUUID);
@@ -201,7 +201,10 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
         } else if (event == "didReceiveGlobalSettings") {
             logToFile("didReceiveGlobalSettings");
             gotGlobalSettings = true;
+
+            logToFile("Preget - " + globalSettings);
             globalSettings = jsonPayload.settings;
+            logToFile("postget - " + globalSettings);
         }
     };
 
@@ -217,6 +220,8 @@ function recentlyAuthorised() {
 
     let expiryDate = new Date(globalSettings.expires_in);
     let now = new Date();
+
+    logToFile("176 - " + expiryDate.getTime() + now.getTime());
 
     if (expiryDate.getTime() < now.getTime()) {
         return true;
@@ -316,7 +321,7 @@ function updateStartButton(context, busyUpdate) {
 }
 
 function fireOffPrediction(context, settings, deviceId) {
-    logToFile("111 " + globalSettings.expires_in + " " + globalSettings.lastUpdated + " " + globalSettings.broadcasterId);
+    logToFile("111 " + globalSettings.expires_in + " " + globalSettings.lastUpdated);
 
     fetch("https://api.twitch.tv/helix/predictions?" + new URLSearchParams({
         "broadcaster_id": globalSettings.broadcasterId,
@@ -331,37 +336,49 @@ function fireOffPrediction(context, settings, deviceId) {
             logToFile("315 - " + response.status);
             throw new Error(response.status);
         } else {
-            response.json().then((body) => {
-                //generate outcomes object eg. ["title": "Yes, give it time."]
-                let outcomesObj = generateOutcomes(settings);
 
-                if (body.data) {
-                    var lastPredictionData = body.data;
-                    var lastPrediction = lastPredictionData[0];
-                    if (lastPrediction.status === "ACTIVE" || lastPrediction.status === "LOCKED") {
+            if (!response.ok) {
+                logToFile("fireOffPrediction - Response not ok - " + response.status + " - " + response.statusText);
+                showError(context);
+            } else {
 
-                        if (lastPrediction.id != globalSettings.activePredictionId) {
-                            //resume remote started prediction
-                            globalSettings.activePredictionId = lastPrediction.id;
-                            globalSettings.activeOutcomes = lastPrediction.outcomes;
-                            globalSettings.activePredictionState = lastPrediction.status;
-                        }
+                response.json().then((body) => {
+                    let outcomesObj = generateOutcomes(settings);
 
-                        saveGlobalSettings(pluginUUID);
+                    if (body.data) {
+                        var lastPredictionData = body.data;
+                        var lastPrediction = lastPredictionData[0];
+                        if (lastPrediction.status === "ACTIVE" || lastPrediction.status === "LOCKED") {
+                            logToFile("145 - Prediction active - " + lastPrediction.status);
 
-                        if (settings.profileSwap != false) {
-                            loadCorrectProfile(pluginUUID, devices[deviceId]);
+                            if (lastPrediction.id != globalSettings.activePredictionId) {
+                                //resume remote started prediction
+                                globalSettings.activePredictionId = lastPrediction.id;
+                                globalSettings.activeOutcomes = lastPrediction.outcomes;
+                                globalSettings.activePredictionState = lastPrediction.status;
+                            }
+
+                            saveGlobalSettings(pluginUUID);
+
+                            if (settings.profileSwap != false) {
+                                loadCorrectProfile(pluginUUID, devices[deviceId]);
+                            }
+                        } else {
+                            logToFile("144 - No active Prediction");
+                            createPrediction(context, settings, deviceId, outcomesObj);
                         }
                     } else {
+                        logToFile("143 - body.data = " + body);
                         createPrediction(context, settings, deviceId, outcomesObj);
                     }
-                } else {
-                    createPrediction(context, settings, deviceId, outcomesObj);
-                }
-            });
+                }).catch((e) => {
+                    logToFile("142" + e);
+                    showError(context);
+                });
+            }
         }
     }).catch((e) => {
-        logToFile(e);
+        logToFile("141" + e);
         showError(context);
     });
 }

@@ -202,9 +202,9 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
             logToFile("didReceiveGlobalSettings");
             gotGlobalSettings = true;
 
-            logToFile("Preget - " + globalSettings);
+            logToFile("Preget - " + JSON.stringify(globalSettings));
             globalSettings = jsonPayload.settings;
-            logToFile("postget - " + globalSettings);
+            logToFile("postget - " + JSON.stringify(globalSettings));
         }
     };
 
@@ -221,7 +221,7 @@ function recentlyAuthorised() {
     let expiryDate = new Date(globalSettings.expires_in);
     let now = new Date();
 
-    logToFile("176 - " + expiryDate.getTime() + now.getTime());
+    logToFile("176 - " + expiryDate.getTime() + " " + now.getTime());
 
     if (expiryDate.getTime() < now.getTime()) {
         return true;

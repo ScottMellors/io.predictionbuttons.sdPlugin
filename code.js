@@ -436,102 +436,6 @@ var outcomeCustomAction = {
     }
 };
 
-var outcome1Action = {
-    type: "io.predictionbuttons.confirmOutcome1",
-    onKeyDown: function (context, settings, coordinates, userDesiredState, deviceId) {
-
-        fetch("https://api.twitch.tv/helix/predictions", {
-            method: "PATCH",
-            body: JSON.stringify({
-                "broadcaster_id": globalSettings.broadcasterId,
-                "id": globalSettings.activePredictionId,
-                "status": "RESOLVED",
-                "winning_outcome_id": globalSettings.activeOutcomes[0].id
-            }),
-            headers: {
-                Authorization: "Bearer " + globalSettings.broadcasterAccessToken,
-                "Client-Id": "dx2y2z4epfd3ycn9oho1dnucnd7ou5",
-                "Content-Type": "application/json"
-            }
-        }).then(response => {
-            if (!response.ok) {
-                throw new Error(response.status);
-            } else {
-                //clean up settings
-                globalSettings.activePredictionId = undefined;
-                globalSettings.activeOutcomes = undefined;
-
-                saveGlobalSettings(pluginUUID);
-
-                //go back to default profile
-                returnToProfile(pluginUUID, devices[deviceId]);
-            }
-        }
-        ).catch((error) => {
-            logToFile(error);
-            showError(context);
-        });
-    },
-    onWillAppear: function (context, settings, coordinates) {
-        //check auth state, set state false if failed
-        if (gotGlobalSettings) {
-            //set the label with outcome text
-            setTitle(context, globalSettings.activeOutcomes[0].title);
-        }
-
-        //Show Alert / notification for deprecation, asking to download new version of profile.
-        alert("ALERT: This is an out of date profile, you cant access the new outcome options until you update! Delete this profile and trigger a prediction to refresh this.");
-
-        showError(context); //Might be confusing?
-    }
-};
-
-var outcome2Action = {
-    type: "io.predictionbuttons.confirmOutcome2",
-    onKeyDown: function (context, settings, coordinates, userDesiredState, deviceId) {
-        fetch("https://api.twitch.tv/helix/predictions", {
-            method: "PATCH",
-            body: JSON.stringify({
-                "broadcaster_id": globalSettings.broadcasterId,
-                "id": globalSettings.activePredictionId,
-                "status": "RESOLVED",
-                "winning_outcome_id": globalSettings.activeOutcomes[1].id
-            }),
-            headers: {
-                Authorization: "Bearer " + globalSettings.broadcasterAccessToken,
-                "Client-Id": "dx2y2z4epfd3ycn9oho1dnucnd7ou5",
-                "Content-Type": "application/json"
-            }
-        }).then(response => {
-            if (!response.ok) {
-                throw new Error(response.status);
-            } else {
-                //clean up settings
-                globalSettings.activePredictionId = undefined;
-                globalSettings.activeOutcomes = undefined;
-
-                saveGlobalSettings(pluginUUID);
-
-                //go back to default profile
-                returnToProfile(pluginUUID, devices[deviceId]);
-            }
-        }
-        ).catch((error) => {
-            logToFile(error);
-            showError(context);
-        });
-    },
-    onWillAppear: function (context, settings, coordinates, deviceId) {
-        //check auth state, set state false if failed
-        if (gotGlobalSettings) {
-            //set the label with outcome text
-            setTitle(context, globalSettings.activeOutcomes[1].title);
-        }
-
-        showError(context); //Might be confusing?
-    }
-};
-
 let outcomeAction = {
     type: "io.predictionbuttons.confirmOutcome",
     onKeyDown: function (context, settings, coordinates, userDesiredState, deviceId) {
@@ -702,15 +606,13 @@ var lockAction = {
 
 //Action Sets
 let actionSet = {
-    "lock": lockAction, "start": startAction, "cancel": cancelAction, "exit": exitAction,
-    "confirmoutcome1": outcome1Action, "confirmoutcome2": outcome2Action
+    "lock": lockAction, "start": startAction, "cancel": cancelAction, "exit": exitAction
 }
 
 let willAppearActionSet = {
-    "lock": lockAction, "confirmoutcome1": outcome1Action, "confirmoutcome2": outcome2Action, "confirmoutcome": outcomeAction, "confirmoutcomecustom": outcomeCustomAction
+    "lock": lockAction, "confirmoutcome": outcomeAction, "confirmoutcomecustom": outcomeCustomAction
 };
 
 let onKeyDownActionSet = {
-    "lock": lockAction, "start": startAction, "cancel": cancelAction, "exit": exitAction, "confirmoutcomecustom": outcomeCustomAction,
-    "confirmoutcome1": outcome1Action, "confirmoutcome2": outcome2Action, "confirmoutcome": outcomeAction
+    "lock": lockAction, "start": startAction, "cancel": cancelAction, "exit": exitAction, "confirmoutcomecustom": outcomeCustomAction, "confirmoutcome": outcomeAction
 };

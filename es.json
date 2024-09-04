@@ -21,14 +21,6 @@
         "Name": "Confirm outcome - Custom",
         "Tooltip": "Confirm the winning outcome! In your layout style!"
     },
-    "io.predictionbuttons.confirmOutcome1": {
-        "Name": "Confirm outcome 1",
-        "Tooltip": "Confirm the winning outcome as Outcome 1!"
-    },
-    "io.predictionbuttons.confirmOutcome2": {
-        "Name": "Confirm outcome 2",
-        "Tooltip": "Confirm the winning outcome as Outcome 2!"
-    },
     "io.predictionbuttons.lock": {
         "Name": "Lock Prediction",
         "Tooltip": "Lock the current prediction manually."

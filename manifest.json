@@ -87,44 +87,6 @@
             "VisibleInActionsList": false
         },
         {
-            "VisibleInActionsList": false,
-            "Name": "Confirm outcome 1",
-            "Icon": "art/predictionicons_caticon",
-            "States": [
-                {
-                    "Image": "art/predictionicons_outcome",
-                    "TitleAlignment": "middle",
-                    "FontSize": "16"
-                },
-                {
-                    "Image": "art/predictionicons_outcome_empty",
-                    "Title": ""
-                }
-            ],
-            "SupportedInMultiActions": false,
-            "Tooltip": "Confirm the winning outcome as Outcome 1!",
-            "UUID": "io.predictionbuttons.confirmOutcome1"
-        },
-        {
-            "VisibleInActionsList": false,
-            "Name": "Confirm outcome 2",
-            "Icon": "art/predictionicons_caticon",
-            "States": [
-                {
-                    "Image": "art/predictionicons_outcome",
-                    "TitleAlignment": "middle",
-                    "FontSize": "16"
-                },
-                {
-                    "Image": "art/predictionicons_outcome_empty",
-                    "Title": ""
-                }
-            ],
-            "SupportedInMultiActions": false,
-            "Tooltip": "Confirm the winning outcome as Outcome 2!",
-            "UUID": "io.predictionbuttons.confirmOutcome2"
-        },
-        {
             "Name": "Lock Prediction",
             "Icon": "art/predictionicons_caticon",
             "States": [

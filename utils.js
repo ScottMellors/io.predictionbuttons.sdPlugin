@@ -42,8 +42,8 @@ function setImage(context, imageName) {
         canvas.height = img.height;
         canvas.width = img.width;
         //ctx.rotate(vRotate*Math.PI/180);
-        ctx.drawImage(img, vPosX, vPosY);
-        var dataURL = canvas.toDataURL(outputFormat || 'image/png');
+        ctx.drawImage(img, 0, 0);
+        var dataURL = canvas.toDataURL('image/png');
 
         var json = {
             'event': 'setImage',

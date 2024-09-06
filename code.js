@@ -96,10 +96,7 @@ function connectElgatoStreamDeckSocket(inPort, inPluginUUID, inRegisterEvent, in
         } else if (event == "didReceiveGlobalSettings") {
             logToFile("didReceiveGlobalSettings");
             gotGlobalSettings = true;
-
-            logToFile("Preget - " + JSON.stringify(globalSettings));
             globalSettings = jsonPayload.settings;
-            logToFile("postget - " + JSON.stringify(globalSettings));
         }
     };
 
@@ -116,18 +113,16 @@ function recentlyAuthorised() {
     }
 
     let expiryDate = new Date(globalSettings.expires_in);
-    let now = new Date();
+    logToFile("176 - " + expiryDate.toTimeString() + " " + new Date(Date.now()) + " " + expiryDate.getTime() + " " + Date.now());
 
-    logToFile("176 - " + expiryDate.getTime() + " " + now.getTime());
-
-    if (expiryDate.getTime() < now.getTime()) {
+    if (expiryDate.getTime() > Date.now()) {
         return true;
     } else {
         return false;
     }
 }
 
-function checkAuthAndContinue(actionName, action) {
+function checkAuthAndContinue(actionName, context, action) {
     if (currentlyBusy == true) {
         logToFile(`203 - ${actionName} - Currently Busy`);
         return;
@@ -340,7 +335,7 @@ function fireOffPrediction(context, settings, deviceId) {
     });
 }
 
-function confirmAction(outcomeNumber, context, settings, deviceId) {
+function doConfirmAction(outcomeNumber, context, settings, deviceId) {
     if (outcomeNumber < globalSettings.activeOutcomes.length) {
         fetch("https://api.twitch.tv/helix/predictions", {
             method: "PATCH",
@@ -376,7 +371,7 @@ function confirmAction(outcomeNumber, context, settings, deviceId) {
     }
 }
 
-function cancelAction(context, deviceId) {
+function doCancelAction(context, deviceId) {
     fetch("https://api.twitch.tv/helix/predictions", {
         method: "PATCH",
         body: JSON.stringify({
@@ -410,7 +405,7 @@ function cancelAction(context, deviceId) {
     });
 }
 
-function lockAction(context) {
+function doLockAction(context) {
     if (globalSettings.activePredictionState === "ACTIVE") {
         fetch("https://api.twitch.tv/helix/predictions", {
             method: "PATCH",
@@ -511,7 +506,7 @@ function updateButtonImage(context, busyUpdate) {
 let startAction = {
     type: "io.predictionbuttons.start",
     onKeyDown: function (context, settings, coordinates, userDesiredState, deviceId) {
-        checkAuthAndContinue("startAction", () => { fireOffPrediction(context, settings, deviceId); })
+        checkAuthAndContinue("startAction", context, () => { fireOffPrediction(context, settings, deviceId); })
     },
 
     onKeyUp: function (context, settings, coordinates, userDesiredState) {
@@ -526,8 +521,8 @@ let startAction = {
 let outcomeCustomAction = {
     type: "io.predictionbuttons.confirmOutcomeCustom",
     onKeyDown: function (context, settings, coordinates, userDesiredState, deviceId) {
-        checkAuthAndContinue("outcomeCustomAction", () => {
-            confirmAction(settings.outcomeNumber || 0, context, settings, deviceId);
+        checkAuthAndContinue("outcomeCustomAction", context, () => {
+            doConfirmAction(settings.outcomeNumber || 0, context, settings, deviceId);
         });
     },
     onWillAppear: function (context, settings, coordinates, deviceId) {
@@ -548,8 +543,8 @@ let outcomeCustomAction = {
 let outcomeAction = {
     type: "io.predictionbuttons.confirmOutcome",
     onKeyDown: function (context, settings, coordinates, userDesiredState, deviceId) {
-        checkAuthAndContinue("outcomeAction", () => {
-            confirmAction(getOutcomeNumberFromCoords(coordinates, deviceId), context, settings, deviceId);
+        checkAuthAndContinue("outcomeAction", context, () => {
+            doConfirmAction(getOutcomeNumberFromCoords(coordinates, deviceId), context, settings, deviceId);
         });
     },
     onWillAppear: function (context, settings, coordinates, deviceId) {
@@ -570,8 +565,8 @@ let outcomeAction = {
 let cancelAction = {
     type: "io.predictionbuttons.cancel",
     onKeyDown: function (context, settings, coordinates, userDesiredState, deviceId) {
-        checkAuthAndContinue("cancelAction", () => {
-            cancelAction(context, deviceId);
+        checkAuthAndContinue("cancelAction", context, () => {
+            doCancelAction(context, deviceId);
         });
     }
 };
@@ -587,8 +582,8 @@ let lockAction = {
     type: "io.predictionbuttons.lock",
     onKeyDown: function (context, settings, coordinates, userDesiredState, device) {
         //update button state
-        checkAuthAndContinue("lockAction", () => {
-            lockAction(context);
+        checkAuthAndContinue("lockAction", context, () => {
+            doLockAction(context);
         });
 
     },

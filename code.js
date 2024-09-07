@@ -136,6 +136,8 @@ function checkAuthAndContinue(actionName, context, action) {
             if (!globalSettings.broadcasterAccessToken) {
                 setAuthState(context, false);
             } else {
+                updateButtonBusyState(context, false);
+
                 fetch("https://id.twitch.tv/oauth2/validate", {
                     headers: {
                         Authorization: "Bearer " + globalSettings.broadcasterAccessToken,
@@ -149,8 +151,9 @@ function checkAuthAndContinue(actionName, context, action) {
                             logToFile(`213 - ${actionName} - ${response.status} ${response.statusText}`);
 
                             let success = await refreshToken();
-                            updateButtonImage(context, false);
+
                             if (success == true) {
+                                updateButtonBusyState(context, true);
                                 //do continue
                                 action.call();
                             } else {
@@ -159,20 +162,15 @@ function checkAuthAndContinue(actionName, context, action) {
                                 setAuthState(context, false);
                             }
                         } else {
-                            updateButtonImage(context, false);
-
                             //show error
                             logToFile(`234 - ${actionName} - ${response.status} ${response.statusText}`);
                             setAuthState(context, false);
                         }
                     } else {
-                        updateButtonImage(context, false);
-
                         setAuthState(context, true);
                         fireOffPrediction(context, settings, deviceId);
                     }
                 }).catch((error) => {
-                    updateButtonImage(context, false);
                     logToFile(`286 - ${actionName} - ${error}`);
                     setAuthState(context, false);
                 });
@@ -491,7 +489,7 @@ function getOutcomeNumberFromCoords(coordinates, deviceId) {
     return outcomeNumber;
 }
 
-function updateButtonImage(context, busyUpdate) {
+function updateButtonBusyState(context, busyUpdate) {
     currentlyBusy = busyUpdate;
     if (busyUpdate == true) {
         setImage(context, "art/predictionicons_start.png");

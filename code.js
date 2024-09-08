@@ -136,7 +136,7 @@ function checkAuthAndContinue(actionName, context, action) {
             if (!globalSettings.broadcasterAccessToken) {
                 setAuthState(context, false);
             } else {
-                updateButtonBusyState(context, false);
+                updateButtonBusyState(context, true);
 
                 fetch("https://id.twitch.tv/oauth2/validate", {
                     headers: {
@@ -153,24 +153,32 @@ function checkAuthAndContinue(actionName, context, action) {
                             let success = await refreshToken();
 
                             if (success == true) {
-                                updateButtonBusyState(context, true);
+                                updateButtonBusyState(context, false);
                                 //do continue
                                 action.call();
                             } else {
+                                updateButtonBusyState(context, false);
+
                                 //alert
                                 showError(context);
                                 setAuthState(context, false);
                             }
                         } else {
+                            updateButtonBusyState(context, false);
+
                             //show error
                             logToFile(`234 - ${actionName} - ${response.status} ${response.statusText}`);
                             setAuthState(context, false);
                         }
                     } else {
+                        updateButtonBusyState(context, false);
+
                         setAuthState(context, true);
                         fireOffPrediction(context, settings, deviceId);
                     }
                 }).catch((error) => {
+                    updateButtonBusyState(context, false);
+
                     logToFile(`286 - ${actionName} - ${error}`);
                     setAuthState(context, false);
                 });

@@ -172,9 +172,8 @@ function checkAuthAndContinue(actionName, context, action) {
                         }
                     } else {
                         updateButtonBusyState(context, false);
-
                         setAuthState(context, true);
-                        fireOffPrediction(context, settings, deviceId);
+                        action.call();
                     }
                 }).catch((error) => {
                     updateButtonBusyState(context, false);

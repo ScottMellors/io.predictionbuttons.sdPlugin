@@ -602,6 +602,8 @@ let lockAction = {
             checkAuthAndContinue("lockAction", context, globalSettings.activePredictionState === "ACTIVE" ? "art/predictionicons_unlocked.png" : "art/predictionicons_locked.png", () => {
                 doLockAction(context);
             });
+        } else {
+            logToFile("567 - globalSettings.activePredictionState != ACTIVE - " + globalSettings.activePredictionState);
         }
     },
     onWillAppear: function (context, settings, coordinates, deviceId) {

@@ -122,7 +122,7 @@ function recentlyAuthorised() {
     }
 }
 
-function checkAuthAndContinue(actionName, context, action) {
+function checkAuthAndContinue(actionName, context, defaultPng, action) {
     if (currentlyBusy == true) {
         logToFile(`203 - ${actionName} - Currently Busy`);
         return;
@@ -136,7 +136,7 @@ function checkAuthAndContinue(actionName, context, action) {
             if (!globalSettings.broadcasterAccessToken) {
                 setAuthState(context, false);
             } else {
-                updateButtonBusyState(context, true);
+                updateButtonBusyState(context, true, defaultPng);
 
                 fetch("https://id.twitch.tv/oauth2/validate", {
                     headers: {
@@ -153,30 +153,30 @@ function checkAuthAndContinue(actionName, context, action) {
                             let success = await refreshToken();
 
                             if (success == true) {
-                                updateButtonBusyState(context, false);
+                                updateButtonBusyState(context, false, defaultPng);
                                 //do continue
                                 action.call();
                             } else {
-                                updateButtonBusyState(context, false);
+                                updateButtonBusyState(context, false, defaultPng);
 
                                 //alert
                                 showError(context);
                                 setAuthState(context, false);
                             }
                         } else {
-                            updateButtonBusyState(context, false);
+                            updateButtonBusyState(context, false, defaultPng);
 
                             //show error
                             logToFile(`234 - ${actionName} - ${response.status} ${response.statusText}`);
                             setAuthState(context, false);
                         }
                     } else {
-                        updateButtonBusyState(context, false);
+                        updateButtonBusyState(context, false, defaultPng);
                         setAuthState(context, true);
                         action.call();
                     }
                 }).catch((error) => {
-                    updateButtonBusyState(context, false);
+                    updateButtonBusyState(context, false, defaultPng);
 
                     logToFile(`286 - ${actionName} - ${error}`);
                     setAuthState(context, false);
@@ -496,12 +496,12 @@ function getOutcomeNumberFromCoords(coordinates, deviceId) {
     return outcomeNumber;
 }
 
-function updateButtonBusyState(context, busyUpdate) {
+function updateButtonBusyState(context, busyUpdate, defaultPng) {
     currentlyBusy = busyUpdate;
     if (busyUpdate == true) {
-        setImage(context, "art/predictionicons_start.png");
-    } else if (busyUpdate == false) {
         setImage(context, "art/predictionicons_wait.png");
+    } else if (busyUpdate == false) {
+        setImage(context, defaultPng);
     } else {
         logToFile("busyUpdate not booly - " + busyUpdate);
     }
@@ -511,7 +511,7 @@ function updateButtonBusyState(context, busyUpdate) {
 let startAction = {
     type: "io.predictionbuttons.start",
     onKeyDown: function (context, settings, coordinates, userDesiredState, deviceId) {
-        checkAuthAndContinue("startAction", context, () => { fireOffPrediction(context, settings, deviceId); })
+        checkAuthAndContinue("startAction", context, "art/predictionicons_start.png", () => { fireOffPrediction(context, settings, deviceId); })
     },
 
     onKeyUp: function (context, settings, coordinates, userDesiredState) {
@@ -521,16 +521,21 @@ let startAction = {
             setAuthState(context, true);
         }
     },
+    onWillAppear: function (context, settings, coordinates, deviceId) {
+        updateButtonBusyState(context, false);
+    }
 }
 
 let outcomeCustomAction = {
     type: "io.predictionbuttons.confirmOutcomeCustom",
     onKeyDown: function (context, settings, coordinates, userDesiredState, deviceId) {
-        checkAuthAndContinue("outcomeCustomAction", context, () => {
+        checkAuthAndContinue("outcomeCustomAction", context, "art/predictionicons_outcome.png", () => {
             doConfirmAction(settings.outcomeNumber || 0, context, settings, deviceId);
         });
     },
     onWillAppear: function (context, settings, coordinates, deviceId) {
+        updateButtonBusyState(context, false);
+
         let outcomeNumber = settings.outcomeNumber || 0;
         //check auth state, set state false if failed
         if (gotGlobalSettings && outcomeNumber < globalSettings.activeOutcomes.length) {
@@ -548,11 +553,13 @@ let outcomeCustomAction = {
 let outcomeAction = {
     type: "io.predictionbuttons.confirmOutcome",
     onKeyDown: function (context, settings, coordinates, userDesiredState, deviceId) {
-        checkAuthAndContinue("outcomeAction", context, () => {
+        checkAuthAndContinue("outcomeAction", context, "art/predictionicons_outcome.png", () => {
             doConfirmAction(getOutcomeNumberFromCoords(coordinates, deviceId), context, settings, deviceId);
         });
     },
     onWillAppear: function (context, settings, coordinates, deviceId) {
+        updateButtonBusyState(context, false);
+
         let outcomeNumber = getOutcomeNumberFromCoords(coordinates, deviceId);
         //check auth state, set state false if failed
         if (gotGlobalSettings && outcomeNumber < globalSettings.activeOutcomes.length) {
@@ -570,9 +577,12 @@ let outcomeAction = {
 let cancelAction = {
     type: "io.predictionbuttons.cancel",
     onKeyDown: function (context, settings, coordinates, userDesiredState, deviceId) {
-        checkAuthAndContinue("cancelAction", context, () => {
+        checkAuthAndContinue("cancelAction", context, "art/predictionicons_cancel.png", () => {
             doCancelAction(context, deviceId);
         });
+    },
+    onWillAppear: function (context, settings, coordinates, deviceId) {
+        updateButtonBusyState(context, false);
     }
 };
 
@@ -586,25 +596,25 @@ let exitAction = {
 let lockAction = {
     type: "io.predictionbuttons.lock",
     onKeyDown: function (context, settings, coordinates, userDesiredState, device) {
-        //update button state
-        checkAuthAndContinue("lockAction", context, () => {
-            doLockAction(context);
-        });
-
+        //Check for if already locked
+        if (globalSettings.activePredictionState === "ACTIVE") {
+            //update button state
+            checkAuthAndContinue("lockAction", context, globalSettings.activePredictionState === "ACTIVE" ? "art/predictionicons_unlocked.png" : "art/predictionicons_locked.png", () => {
+                doLockAction(context);
+            });
+        }
     },
     onWillAppear: function (context, settings, coordinates, deviceId) {
+        updateButtonBusyState(context, false);
+
         let currentLockState = (globalSettings.activePredictionState === "ACTIVE" ? false : true);
         setLockState(context, currentLockState);
     }
 }
 
 //Action Sets
-let actionSet = {
-    "lock": lockAction, "start": startAction, "cancel": cancelAction, "exit": exitAction
-}
-
 let willAppearActionSet = {
-    "lock": lockAction, "confirmoutcome": outcomeAction, "confirmoutcomecustom": outcomeCustomAction
+    "lock": lockAction, "confirmoutcome": outcomeAction, "confirmoutcomecustom": outcomeCustomAction, "start": startAction, "cancel": cancelAction,
 };
 
 let onKeyDownActionSet = {

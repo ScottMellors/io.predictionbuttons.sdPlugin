@@ -120,7 +120,7 @@
     "Name": "Twitch Prediction Buttons",
     "Icon": "art/predictionicons_icon",
     "URL": "https://tools.ghostlytuna.co.uk",
-    "Version": "1.5.15",
+    "Version": "1.5.16",
     "Profiles": [
         {
             "Name": "PredictionUi",

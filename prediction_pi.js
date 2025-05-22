@@ -130,7 +130,6 @@ function loadAuthWindow() {
 }
 
 function checkAuth() {
-
     if (globalSettings.broadcasterAccessToken) {
         //send request to server
         fetch("https://id.twitch.tv/oauth2/validate", {

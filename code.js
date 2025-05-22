@@ -305,7 +305,7 @@ function fireOffPrediction(context, settings, deviceId) {
                     if (body.data) {
                         let lastPredictionData = body.data;
                         let lastPrediction = lastPredictionData[0];
-                        if (lastPrediction.status === "ACTIVE" || lastPrediction.status === "LOCKED") {
+                        if (lastPrediction && (lastPrediction.status === "ACTIVE" || lastPrediction.status === "LOCKED")) {
                             logToFile("145 - Prediction active - " + lastPrediction.status);
 
                             if (lastPrediction.id != globalSettings.activePredictionId) {

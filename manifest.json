@@ -7,12 +7,12 @@
                 {
                     "Image": "art/predictionicons_start",
                     "TitleAlignment": "middle",
-                    "FontSize": "16"
+                    "FontSize": 16
                 },
                 {
                     "Image": "art/predictionicons_auth",
                     "TitleAlignment": "middle",
-                    "FontSize": "16"
+                    "FontSize": 16
                 }
             ],
             "SupportedInMultiActions": true,
@@ -26,7 +26,7 @@
                 {
                     "Image": "art/predictionicons_cancel",
                     "TitleAlignment": "middle",
-                    "FontSize": "16"
+                    "FontSize": 16
                 }
             ],
             "SupportedInMultiActions": false,
@@ -40,7 +40,7 @@
                 {
                     "Image": "art/predictionicons_back",
                     "TitleAlignment": "middle",
-                    "FontSize": "16"
+                    "FontSize": 16
                 }
             ],
             "SupportedInMultiActions": false,
@@ -55,7 +55,7 @@
                 {
                     "Image": "art/predictionicons_outcome",
                     "TitleAlignment": "middle",
-                    "FontSize": "13"
+                    "FontSize": 13
                 },
                 {
                     "Image": "art/predictionicons_outcome_empty",
@@ -74,7 +74,7 @@
                 {
                     "Image": "art/predictionicons_outcome",
                     "TitleAlignment": "middle",
-                    "FontSize": "13"
+                    "FontSize": 13
                 },
                 {
                     "Image": "art/predictionicons_outcome_empty",
@@ -93,12 +93,12 @@
                 {
                     "Image": "art/predictionicons_unlocked",
                     "TitleAlignment": "middle",
-                    "FontSize": "16"
+                    "FontSize": 16
                 },
                 {
                     "Image": "art/predictionicons_locked",
                     "TitleAlignment": "middle",
-                    "FontSize": "16"
+                    "FontSize": 16
                 }
             ],
             "SupportedInMultiActions": false,
@@ -106,6 +106,7 @@
             "UUID": "io.predictionbuttons.lock"
         }
     ],
+	"UUID": "io.predictionbuttons",
     "SDKVersion": 2,
     "Author": "GhostlyTuna",
     "Category": "Twitch Prediction Buttons",
@@ -124,25 +125,25 @@
     "Profiles": [
         {
             "Name": "PredictionUi",
-            "ReadOnly": true,
+            "Readonly": true,
             "DeviceType": 0,
             "DontAutoSwitchWhenInstalled": true
         },
         {
             "Name": "PredictionUiXL",
-            "ReadOnly": true,
+            "Readonly": true,
             "DeviceType": 2,
             "DontAutoSwitchWhenInstalled": true
         },
         {
             "Name": "PredictionUiMini",
-            "ReadOnly": false,
+            "Readonly": false,
             "DeviceType": 1,
             "DontAutoSwitchWhenInstalled": true
         },
         {
             "Name": "PredictionUiMobile",
-            "ReadOnly": false,
+            "Readonly": false,
             "DeviceType": 3,
             "DontAutoSwitchWhenInstalled": true
         }
@@ -158,6 +159,6 @@
         }
     ],
     "Software": {
-        "MinimumVersion": "4.1"
+        "MinimumVersion": "7.2"
     }
 }
